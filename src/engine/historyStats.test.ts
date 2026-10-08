@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { rollingAverage, summarize, type SessionLike } from './historyStats';
+import { pacingByPosition, pointsBreakdown, rollingAverage, slowQuestions, summarize, type SessionLike } from './historyStats';
+import type { Attempt } from './types';
 
 const session = (startedAt: number, correct: number, mode = 'test'): SessionLike => ({
   mode,
@@ -35,5 +36,59 @@ describe('summarize', () => {
 describe('rollingAverage', () => {
   it('averages a trailing window', () => {
     expect(rollingAverage([10, 20, 30, 40, 50, 60], 3)).toEqual([10, 15, 20, 30, 40, 50]);
+  });
+});
+
+const attempt = (position: number, over: Partial<Attempt> = {}): Attempt => ({
+  questionId: `q${position}`,
+  type: 'x',
+  category: 'verbal',
+  position,
+  choiceIndex: 0,
+  correct: true,
+  timeMs: 1000,
+  ...over,
+});
+const timed = (startedAt: number, attempts: Attempt[], mode = 'test'): SessionLike => ({ mode, startedAt, total: 50, attempts });
+
+describe('pointsBreakdown', () => {
+  it('splits each full test into correct, wrong and unanswered (skipped plus never reached)', () => {
+    const s = timed(1, [attempt(0), attempt(1, { correct: false }), attempt(2, { choiceIndex: null, correct: false })]);
+    expect(pointsBreakdown([s, timed(0, [], 'drill')])).toEqual([{ correct: 1, wrong: 1, unanswered: 48 }]);
+  });
+
+  it('orders tests oldest first', () => {
+    const late = timed(2, [attempt(0), attempt(1)]);
+    const early = timed(1, [attempt(0)]);
+    expect(pointsBreakdown([late, early]).map((b) => b.correct)).toEqual([1, 2]);
+  });
+});
+
+describe('pacingByPosition', () => {
+  it('averages time per position over timed sessions only, 1-based', () => {
+    const a = timed(1, [attempt(0, { timeMs: 10_000 }), attempt(1, { timeMs: 20_000 })]);
+    const b = timed(2, [attempt(0, { timeMs: 20_000 })], 'speed');
+    const untimed = timed(3, [attempt(0, { timeMs: 90_000 })], 'drill');
+    expect(pacingByPosition([a, b, untimed])).toEqual([
+      { position: 1, avgMs: 15_000, samples: 2 },
+      { position: 2, avgMs: 20_000, samples: 1 },
+    ]);
+  });
+});
+
+describe('slowQuestions', () => {
+  it('counts answers over 30 s in the most recent timed sessions, grouped by type', () => {
+    const slow = (p: number, type: string) => attempt(p, { timeMs: 31_000, type });
+    const old = timed(1, [slow(0, 'ratio')]);
+    const recent = timed(2, [slow(0, 'matrix'), slow(1, 'matrix'), slow(2, 'ratio'), attempt(3, { timeMs: 30_000 })]);
+    const drill = timed(3, [slow(0, 'analogy')], 'drill');
+    expect(slowQuestions([old, recent, drill], 1)).toEqual({
+      sessions: 1,
+      slow: 3,
+      types: [
+        { type: 'matrix', count: 2 },
+        { type: 'ratio', count: 1 },
+      ],
+    });
   });
 });
