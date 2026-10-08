@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 import { QuestionView } from '../components/QuestionView';
-import { Timer } from '../components/Timer';
+import { Stopwatch, Timer } from '../components/Timer';
 import { isFinished, questionRemainingMs, remainingMs, type Session } from '../engine/session';
 import { SECONDS_PER_QUESTION } from '../engine/testBuilder';
 import { useSession } from '../store/session';
@@ -17,6 +17,44 @@ function Pace({ session, remainingMs }: { session: Session; remainingMs: number 
     <span className="pace">
       {avg !== null && <span className={onPace ? 'on-pace' : 'behind'}>avg {avg.toFixed(1)} s {onPace ? '· on pace' : '· too slow'}</span>}
       <Timer remainingMs={remainingMs} warnBelowMs={5_000} />
+    </span>
+  );
+}
+
+const HIDE_CLOCK_KEY = 'ccat-prep:drill-clock-hidden';
+
+function readHidden() {
+  try {
+    return localStorage.getItem(HIDE_CLOCK_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Untimed drills: time spent so far and the average per answered question, for awareness rather than pressure. */
+function DrillClock({ session, now }: { session: Session; now: number }) {
+  const [hidden, setHidden] = useState(readHidden);
+  const toggle = () => {
+    setHidden(!hidden);
+    try {
+      localStorage.setItem(HIDE_CLOCK_KEY, hidden ? '0' : '1');
+    } catch {
+      // storage blocked: the choice lasts for this visit
+    }
+  };
+  const times = session.attempts.map((a) => a.timeMs);
+  const avg = times.length ? times.reduce((a, b) => a + b, 0) / times.length / 1000 : null;
+  return (
+    <span className="pace">
+      {!hidden && avg !== null && (
+        <span className="muted small">
+          avg {avg.toFixed(1)} s · target {SECONDS_PER_QUESTION} s
+        </span>
+      )}
+      {hidden ? <span className="muted">Untimed</span> : <Stopwatch elapsedMs={now - session.startedAt} />}
+      <button type="button" className="link small" onClick={toggle}>
+        {hidden ? 'Show clock' : 'Hide clock'}
+      </button>
     </span>
   );
 }
@@ -89,7 +127,7 @@ export function TestRunner() {
         </span>
         {session.timeLimitMs !== null && <Timer remainingMs={remaining} />}
         {session.perQuestionMs !== null && <Pace session={session} remainingMs={questionRemaining} />}
-        {session.timeLimitMs === null && session.perQuestionMs === null && <span className="muted">Untimed</span>}
+        {session.timeLimitMs === null && session.perQuestionMs === null && <DrillClock session={session} now={now} />}
       </div>
       {session.perQuestionMs !== null && (
         <div className="question-clock" aria-hidden>

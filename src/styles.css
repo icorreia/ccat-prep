@@ -342,9 +342,16 @@ button.link {
 
 .runner-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 4px 12px;
   margin-bottom: 8px;
+}
+
+.runner-bar > *,
+.pace > * {
+  white-space: nowrap;
 }
 
 .timer {
@@ -579,7 +586,9 @@ table.stats .num {
 
 .pace {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 12px;
   align-items: center;
 }
 
