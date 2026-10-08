@@ -522,6 +522,10 @@ table.stats .num {
   color: var(--wrong);
 }
 
+.badge.slow {
+  color: var(--text);
+}
+
 .badge.skipped,
 .badge.unreached {
   color: var(--muted);
@@ -594,18 +598,22 @@ table.stats .num {
 :root {
   --series-1: #2a78d6;
   --series-2: #eb6834;
+  /* Unanswered: no hue, since it is the absence of an answer (>= 3:1 on the surface) */
+  --series-neutral: #8f8e88;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --series-1: #3987e5;
     --series-2: #d95926;
+    --series-neutral: #6b6a65;
   }
 }
 
 :root[data-theme='dark'] {
   --series-1: #3987e5;
   --series-2: #d95926;
+  --series-neutral: #6b6a65;
 }
 
 .chart {
@@ -635,6 +643,10 @@ table.stats .num {
 
 .swatch.series-2 {
   background: var(--series-2);
+}
+
+.swatch.neutral {
+  background: var(--series-neutral);
 }
 
 .swatch.reference {
@@ -670,4 +682,9 @@ table.stats .num {
 
 .nowrap {
   white-space: nowrap;
+}
+
+.slow-note {
+  font-size: 14px;
+  margin: 8px 0 0;
 }

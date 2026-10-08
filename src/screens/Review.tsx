@@ -4,6 +4,7 @@ import { toSession } from '../store/history';
 import { useHistory } from '../store/historyContext';
 import { QuestionView } from '../components/QuestionView';
 import { isFinished, type Session } from '../engine/session';
+import { SLOW_MS } from '../engine/historyStats';
 import type { Attempt } from '../engine/types';
 import { useSession } from '../store/session';
 
@@ -47,6 +48,7 @@ export function ReviewList({ session }: { session: Session }) {
             <strong>Question {position + 1}</strong>
             <span className={`badge ${status}`}>{STATUS_LABELS[status]}</span>
             {attempt && <span className="muted small">{(attempt.timeMs / 1000).toFixed(1)} s</span>}
+            {attempt && attempt.timeMs > SLOW_MS && <span className="badge slow">Over {SLOW_MS / 1000} s</span>}
             <span className="muted small">level {question.difficulty}</span>
           </div>
           <QuestionView question={question} selected={attempt?.choiceIndex ?? null} reveal />
