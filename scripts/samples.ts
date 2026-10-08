@@ -4,11 +4,18 @@
 //   npm run samples -- number-series -> one generator
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { generateQuestion } from '../src/engine/question';
-import type { Generator, Question } from '../src/engine/types';
+import type { DataTable, Generator, Question } from '../src/engine/types';
 import { GENERATORS, getGenerator } from '../src/generators/index';
 
 const PER_LEVEL = 4;
 const LETTERS = 'ABCDE';
+
+function renderTable(table: DataTable): string {
+  const header = `| ${table.rowHeader} | ${table.columns.join(' | ')} |`;
+  const rule = `| --- | ${table.columns.map(() => '---:').join(' | ')} |`;
+  const rows = table.rows.map((r) => `| ${r.label} | ${r.values.join(' | ')} |`);
+  return [`_${table.title} (shown as ${table.display === 'bar' ? 'a bar chart' : 'a table'})_`, '', header, rule, ...rows].join('\n');
+}
 
 function render(q: Question): string {
   const choices = q.choices
@@ -20,6 +27,7 @@ function render(q: Question): string {
   return [
     `**${q.id}**`,
     '',
+    ...(q.table ? [renderTable(q.table), ''] : []),
     q.prompt.replace(/\n\n/g, '  \n'),
     '',
     choices,

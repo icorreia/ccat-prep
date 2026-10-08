@@ -48,6 +48,7 @@ export function finalize(
     difficulty,
     seed,
     prompt: draft.prompt,
+    ...(draft.table && { table: draft.table }),
     choices,
     answerIndex: choices.indexOf(draft.answer),
     explanation: draft.explanation,
