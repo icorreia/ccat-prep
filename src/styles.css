@@ -655,6 +655,8 @@ table.stats .num {
 
 .table-scroll {
   overflow-x: auto;
+  /* Contains absolutely positioned children (e.g. .visually-hidden headers), which would otherwise widen the page. */
+  position: relative;
 }
 
 .visually-hidden {
