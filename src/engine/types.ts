@@ -26,7 +26,10 @@ export interface DataTable {
  * An answer choice: a word or number, or a spatial figure. Figure choices also carry `text`
  * (a plain description) for screen readers, samples and logs.
  */
-export type Choice = { kind: 'text'; text: string } | { kind: 'figure'; figure: FigureSpec; text: string };
+export type Choice = ({ kind: 'text'; text: string } | { kind: 'figure'; figure: FigureSpec; text: string }) & {
+  /** For a wrong choice built from a typical mistake: what that mistake is, shown in Review. */
+  why?: string;
+};
 
 /** Figures shown with a spatial question: a series or a 3×3 matrix, with the missing cell as null. */
 export type Visual =

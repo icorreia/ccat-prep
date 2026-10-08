@@ -17,6 +17,37 @@ function VisualView({ visual }: { visual: Visual }) {
 
 const LETTERS = 'ABCDE';
 
+/** The typical mistakes behind the wrong choices: yours first, then the others. */
+function Traps({ question, selected }: { question: Question; selected: number | null }) {
+  const traps = question.choices
+    .map((choice, i) => ({ i, why: choice.why }))
+    .filter((t): t is { i: number; why: string } => !!t.why && t.i !== question.answerIndex);
+  if (traps.length === 0) return null;
+  const yours = traps.find((t) => t.i === selected);
+  const others = traps.filter((t) => t !== yours);
+  return (
+    <div className="traps">
+      {yours && (
+        <p>
+          <strong>You chose {LETTERS[yours.i]}:</strong> {yours.why}
+        </p>
+      )}
+      {others.length > 0 && (
+        <>
+          <p className="traps-title">{yours ? 'Other traps' : 'Traps in the wrong answers'}</p>
+          <ul>
+            {others.map((t) => (
+              <li key={t.i}>
+                <strong>{LETTERS[t.i]}:</strong> {t.why}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
 interface Props {
   question: Question;
   /** Index of the chosen answer, if any. */
@@ -60,6 +91,7 @@ export function QuestionView({ question, selected = null, onSelect, reveal = fal
         })}
       </ol>
       {reveal && <p className="explanation">{question.explanation}</p>}
+      {reveal && <Traps question={question} selected={selected} />}
     </article>
   );
 }

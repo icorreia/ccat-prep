@@ -36,6 +36,13 @@ describe.each(GENERATORS.map((g) => [g.type, g] as const))('%s', (_type, generat
     }
   });
 
+  it('explains mistakes only on wrong choices, never on the answer', () => {
+    for (const q of questions) {
+      expect(q.choices[q.answerIndex]!.why, q.id).toBeUndefined();
+      for (const c of q.choices) if (c.why !== undefined) expect(c.why.length, q.id).toBeGreaterThan(10);
+    }
+  });
+
   it('has a prompt and an explanation', () => {
     for (const q of questions) {
       expect(q.prompt.length).toBeGreaterThan(5);

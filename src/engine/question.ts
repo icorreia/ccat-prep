@@ -10,6 +10,9 @@ export const MAX_ATTEMPTS = 500;
 
 export const text = (value: string | number): Choice => ({ kind: 'text', text: String(value) });
 
+/** Attaches the mistake behind a wrong choice. */
+export const because = (choice: Choice, why: string): Choice => ({ ...choice, why });
+
 export const figureChoice = (figure: FigureSpec): Choice => ({ kind: 'figure', figure, text: describeFigure(figure) });
 
 /** Two choices with the same key would look identical to the test-taker. */

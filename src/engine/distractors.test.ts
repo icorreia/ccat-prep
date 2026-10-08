@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { numericDistractors } from './distractors';
+import { numericChoices, numericDistractors } from './distractors';
 import { Rng } from './rng';
 
 describe('numericDistractors', () => {
@@ -31,5 +31,22 @@ describe('numericDistractors', () => {
   it('keeps fillers near the answer', () => {
     const out = numericDistractors(200, [], 4, new Rng(5));
     for (const v of out) expect(Math.abs(v - 200)).toBeLessThanOrEqual(100);
+  });
+});
+
+describe('numericChoices', () => {
+  it('keeps the note of each mistake, formats values, and leaves fillers without a note', () => {
+    const choices = numericChoices(50, [{ value: 48, why: 'added instead of reversing' }, 40, { value: 50, why: 'is the answer' }], 4, new Rng(1), {
+      format: (v) => `$${v}`,
+    });
+    expect(choices[0]).toEqual({ kind: 'text', text: '$48', why: 'added instead of reversing' });
+    expect(choices[1]).toEqual({ kind: 'text', text: '$40' });
+    expect(choices.every((c) => c.text !== '$50')).toBe(true);
+    expect(choices.slice(2).every((c) => c.why === undefined)).toBe(true);
+  });
+
+  it('picks the same values as numericDistractors for the same seed', () => {
+    const mistakes = [{ value: 12, why: 'x' }, 30];
+    expect(numericChoices(20, mistakes, 4, new Rng(5)).map((c) => Number(c.text))).toEqual(numericDistractors(20, mistakes, 4, new Rng(5)));
   });
 });

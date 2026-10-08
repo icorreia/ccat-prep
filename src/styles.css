@@ -176,6 +176,24 @@ button:not(:disabled) {
   background: var(--bg);
 }
 
+.traps {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.traps p {
+  margin: 4px 0;
+}
+
+.traps-title {
+  color: var(--muted);
+}
+
+.traps ul {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
 /* Data tables and charts */
 
 .data-table,
