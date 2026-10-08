@@ -57,11 +57,11 @@ export function ScoreTrend({ sessions }: { sessions: StoredSession[] }) {
         </span>
       </div>
       <ResponsiveContainer width="100%" height={240}>
-        <LineChart data={data} margin={{ top: 16, right: 16, bottom: 4, left: -16 }} accessibilityLayer>
+        <LineChart data={data} margin={{ top: 20, right: 16, bottom: 4, left: -16 }} accessibilityLayer>
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis dataKey="n" tickLine={false} axisLine={{ stroke: 'var(--border)' }} tick={{ fill: 'var(--muted)', fontSize: 12 }} />
           <YAxis domain={[0, 50]} ticks={[0, 10, 20, 30, 40, 50]} tickLine={false} axisLine={false} tick={{ fill: 'var(--muted)', fontSize: 12 }} />
-          <ReferenceLine y={best} stroke="var(--muted)" strokeDasharray="4 4" label={{ value: `Best ${best}`, position: 'insideTopLeft', fill: 'var(--muted)', fontSize: 12 }} />
+          <ReferenceLine y={best} stroke="var(--muted)" strokeDasharray="4 4" label={{ value: `Best ${best}`, position: 'insideBottomLeft', offset: 8, fill: 'var(--muted)', fontSize: 12 }} />
           <Tooltip content={TrendTooltip} cursor={{ stroke: 'var(--muted)', strokeWidth: 1 }} />
           <Line type="monotone" dataKey="avg" stroke="var(--series-2)" strokeWidth={2} dot={false} activeDot={false} isAnimationActive={false} />
           <Line
