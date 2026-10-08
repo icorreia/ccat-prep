@@ -1,4 +1,6 @@
+import { describeFigure, figureKey } from '../spatial/figure';
 import { Rng } from './rng';
+import type { FigureSpec } from '../spatial/figure';
 import type { Choice, Difficulty, Draft, Generator, Question } from './types';
 
 export const DEFAULT_CHOICE_COUNT = 5;
@@ -8,9 +10,11 @@ export const MAX_ATTEMPTS = 500;
 
 export const text = (value: string | number): Choice => ({ kind: 'text', text: String(value) });
 
+export const figureChoice = (figure: FigureSpec): Choice => ({ kind: 'figure', figure, text: describeFigure(figure) });
+
 /** Two choices with the same key would look identical to the test-taker. */
 export function choiceKey(choice: Choice): string {
-  return `${choice.kind}:${choice.text.trim().toLowerCase()}`;
+  return choice.kind === 'text' ? `text:${choice.text.trim().toLowerCase()}` : `figure:${figureKey(choice.figure)}`;
 }
 
 export const questionId = (type: string, difficulty: Difficulty, seed: number) =>
@@ -65,6 +69,7 @@ function build(
     seed,
     prompt: draft.prompt,
     ...(draft.table && { table: draft.table }),
+    ...(draft.visual && { visual: draft.visual }),
     choices,
     answerIndex,
     explanation: draft.explanation,

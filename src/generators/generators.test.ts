@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateQuestion, rebuildQuestion } from '../engine/question';
+import { choiceKey, generateQuestion, rebuildQuestion } from '../engine/question';
 import { GENERATORS, getGenerator } from './index';
 
 /** Seeds per generator, spread evenly over its levels. */
@@ -14,10 +14,10 @@ describe.each(GENERATORS.map((g) => [g.type, g] as const))('%s', (_type, generat
     for (const q of questions) expect(generator.score(q.features)).toBe(q.difficulty);
   });
 
-  it('has distinct choices with the answer at answerIndex', () => {
+  it('has visually distinct choices with the answer at answerIndex', () => {
     for (const q of questions) {
-      const texts = q.choices.map((c) => c.text);
-      expect(new Set(texts).size).toBe(texts.length);
+      const keys = q.choices.map(choiceKey);
+      expect(new Set(keys).size).toBe(keys.length);
       expect(q.answerIndex).toBeGreaterThanOrEqual(0);
       expect(q.answerIndex).toBeLessThan(q.choices.length);
     }

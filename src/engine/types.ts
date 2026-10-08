@@ -1,3 +1,4 @@
+import type { FigureSpec } from '../spatial/figure';
 import type { Rng } from './rng';
 
 /** The three areas Criteria reports scores for. Logic items are part of math & logic. */
@@ -21,8 +22,14 @@ export interface DataTable {
   display: 'table' | 'bar';
 }
 
-/** Figure choices arrive with the spatial generators. */
-export type Choice = { kind: 'text'; text: string };
+/**
+ * An answer choice: a word or number, or a spatial figure. Figure choices also carry `text`
+ * (a plain description) for screen readers, samples and logs.
+ */
+export type Choice = { kind: 'text'; text: string } | { kind: 'figure'; figure: FigureSpec; text: string };
+
+/** Figures shown with a spatial question: a series with a missing panel (null). */
+export type Visual = { kind: 'series'; panels: (FigureSpec | null)[] };
 
 export interface Question {
   /** `${type}:${difficulty}:${seed}`; enough to rebuild the question. */
@@ -33,6 +40,7 @@ export interface Question {
   seed: number;
   prompt: string;
   table?: DataTable;
+  visual?: Visual;
   choices: Choice[];
   answerIndex: number;
   explanation: string;
@@ -43,6 +51,7 @@ export interface Question {
 export interface Draft {
   prompt: string;
   table?: DataTable;
+  visual?: Visual;
   answer: Choice;
   distractors: Choice[];
   explanation: string;
