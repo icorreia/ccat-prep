@@ -1,8 +1,10 @@
 import type { Generator } from '../engine/types';
 import { average } from './math/average';
+import { fractionGenerator } from './math/fraction';
 import { numberSeries } from './math/numberSeries';
+import { percentage } from './math/percentage';
 
-export const GENERATORS: readonly Generator[] = [numberSeries, average];
+export const GENERATORS: readonly Generator[] = [numberSeries, average, percentage, fractionGenerator];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));
 

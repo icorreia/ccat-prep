@@ -26,8 +26,9 @@ describe.each(GENERATORS.map((g) => [g.type, g] as const))('%s', (_type, generat
   it('keeps numeric choices whole and non-negative (mental math)', () => {
     for (const q of questions) {
       for (const c of q.choices) {
-        const n = Number(c.text);
-        if (c.text.trim() !== '' && !Number.isNaN(n)) {
+        const raw = c.text.replace(/^\$|%$/g, ''); // "$50" and "25%" are numeric too
+        const n = Number(raw);
+        if (raw.trim() !== '' && !Number.isNaN(n)) {
           expect(Number.isInteger(n), `${q.id}: ${c.text}`).toBe(true);
           expect(n, `${q.id}: ${c.text}`).toBeGreaterThanOrEqual(0);
         }
