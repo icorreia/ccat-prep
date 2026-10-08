@@ -1,4 +1,4 @@
-import { text } from '../../engine/question';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
 
@@ -94,6 +94,17 @@ export const detailFeatures = (item: DetailItem) => ({
   length: Math.max(...item.pairs.map((p) => p.left.length)),
 });
 
+/** Why a wrong count is wrong: differences missed, or identical pairs doubted. */
+export function countNote(item: DetailItem, n: number): string {
+  const diff = Math.abs(n - item.identical);
+  const s = diff === 1 ? '' : 's';
+  if (n > item.identical) {
+    const missed = item.pairs.find((p) => p.change)!;
+    return `Missed ${diff} difference${s}. Compare character by character; for example, in "${missed.left}" vs "${missed.right}", ${missed.change}.`;
+  }
+  return `Counted ${diff} identical pair${s} as different. Pairs that look alike at a glance can be exactly the same.`;
+}
+
 export const attentionToDetail: Generator = {
   type: 'attention-to-detail',
   category: 'verbal',
@@ -114,7 +125,7 @@ export const attentionToDetail: Generator = {
       distractors: Array.from({ length: count + 1 }, (_, n) => n)
         .filter((n) => n !== answer)
         .sort((x, y) => Math.abs(x - answer) - Math.abs(y - answer))
-        .map(text),
+        .map((n) => because(text(n), countNote(item, n))),
       choiceCount: Math.min(5, count + 1),
       explanation: item.pairs
         .map((p, i) => `Pair ${i + 1}: ${p.change ? `different (${p.change})` : 'identical'}`)

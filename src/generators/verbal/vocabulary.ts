@@ -1,4 +1,4 @@
-import { text } from '../../engine/question';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
 import { WORD_PAIRS, type Cluster, type WordPair } from '../../data/words';
@@ -44,6 +44,15 @@ export function buildItem(rng: Rng, mode: Mode, level: Difficulty): VocabItem | 
   return { pair, target, answer, traps, others };
 }
 
+/** A more common word from the same cluster, as a quick gloss ("minuscule" → "small"). */
+export function gloss(word: string): string | undefined {
+  for (const p of WORD_PAIRS) {
+    const cluster = word in p.a ? p.a : word in p.b ? p.b : undefined;
+    if (cluster) return words(cluster).filter((w) => w !== word).sort((x, y) => cluster[x]! - cluster[y]!)[0];
+  }
+  return undefined;
+}
+
 const tierOf = (word: string) => {
   for (const p of WORD_PAIRS) if (word in p.a || word in p.b) return tier(p, word);
   throw new Error(`Unknown word: ${word}`);
@@ -65,7 +74,16 @@ function makeGenerator(mode: Mode): Generator {
       if (!item) return { prompt: '', answer: text(''), distractors: [], explanation: '', features: { valid: 0 } };
       const { target, answer, traps, others } = item;
       // One trap from the opposite relation (e.g. "elongate" for the opposite of "lengthen"), then unrelated words.
-      const distractors = [...traps.slice(0, 1), ...others].map((w) => text(w));
+      const want = mode === 'synonym' ? 'a word with the same meaning' : 'the opposite';
+      const distractors = [
+        ...traps.slice(0, 1).map((w) =>
+          because(text(w), `Means ${mode === 'synonym' ? 'the opposite of' : 'the same as'} ${target.toUpperCase()}. The question asks for ${want}.`),
+        ),
+        ...others.map((w) => {
+          const g = gloss(w);
+          return because(text(w), g ? `Unrelated: "${w}" means roughly "${g}".` : `Unrelated to ${target.toUpperCase()}.`);
+        }),
+      ];
       const trapNote = traps.length
         ? ` "${traps[0]}" is a trap: it means the ${mode === 'synonym' ? 'opposite' : 'same'}.`
         : '';
