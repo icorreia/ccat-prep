@@ -10,46 +10,46 @@ _Support tickets per month (shown as a bar chart)_
 
 | Month | Tickets |
 | --- | ---: |
-| January | 180 |
-| February | 40 |
-| March | 110 |
-| April | 90 |
-| May | 50 |
+| January | 40 |
+| February | 110 |
+| March | 90 |
+| April | 50 |
+| May | 160 |
 
 How many tickets were received in April?
 
-A. 40  
-B. 110  
-C. 90 ✅  
-D. 50  
-E. 180
+A. 110  
+B. 90  
+C. 160  
+D. 50 ✅  
+E. 40
 
-> Read the April row: 90.  
+> Read the April row: 50.  
 > _features: kind=1, cells=1, valid=1_
 
 ---
 
 **table-reading:1:1001**
 
-_Units sold per month (shown as a table)_
+_Website visitors per month (shown as a bar chart)_
 
-| Month | Units |
+| Month | Visitors (thousands) |
 | --- | ---: |
-| January | 90 |
+| January | 180 |
 | February | 150 |
-| March | 200 |
-| April | 140 |
-| May | 180 |
+| March | 130 |
+| April | 110 |
+| May | 170 |
 
-How many units were sold in April?
+How many thousand visitors were recorded in May?
 
-A. 180  
-B. 150  
-C. 90  
-D. 140 ✅  
-E. 200
+A. 150  
+B. 110  
+C. 170 ✅  
+D. 130  
+E. 180
 
-> Read the April row: 140.  
+> Read the May row: 170.  
 > _features: kind=1, cells=1, valid=1_
 
 ---
@@ -60,46 +60,46 @@ _Website visitors per month (shown as a table)_
 
 | Month | Visitors (thousands) |
 | --- | ---: |
-| January | 100 |
-| February | 120 |
-| March | 140 |
-| April | 90 |
-| May | 70 |
+| January | 120 |
+| February | 140 |
+| March | 90 |
+| April | 70 |
+| May | 180 |
 
-How many thousand visitors were recorded in May?
+How many thousand visitors were recorded in January?
 
-A. 100  
-B. 140  
-C. 90  
-D. 120  
-E. 70 ✅
+A. 90  
+B. 70  
+C. 120 ✅  
+D. 140  
+E. 180
 
-> Read the May row: 70.  
+> Read the January row: 120.  
 > _features: kind=1, cells=1, valid=1_
 
 ---
 
 **table-reading:1:1003**
 
-_Support tickets per month (shown as a bar chart)_
+_Website visitors per month (shown as a bar chart)_
 
-| Month | Tickets |
+| Month | Visitors (thousands) |
 | --- | ---: |
-| January | 170 |
-| February | 200 |
-| March | 70 |
-| April | 130 |
-| May | 150 |
+| January | 200 |
+| February | 70 |
+| March | 130 |
+| April | 150 |
+| May | 180 |
 
-How many tickets were received in May?
+How many thousand visitors were recorded in May?
 
 A. 200  
 B. 130  
-C. 170  
-D. 150 ✅  
-E. 70
+C. 150  
+D. 70  
+E. 180 ✅
 
-> Read the May row: 150.  
+> Read the May row: 180.  
 > _features: kind=1, cells=1, valid=1_
 
 ## Level 2
@@ -111,195 +111,195 @@ _Website visitors per month (shown as a table)_
 | Month | Visitors (thousands) |
 | --- | ---: |
 | January | 80 |
-| February | 40 |
-| March | 140 |
-| April | 200 |
-| May | 190 |
+| February | 110 |
+| March | 150 |
+| April | 110 |
+| May | 110 |
 
-In which month were the fewest visitors recorded?
+In which month were the most visitors recorded?
 
-A. February ✅  
-B. January  
-C. March  
-D. May  
-E. April
+A. January  
+B. April  
+C. May  
+D. February  
+E. March ✅
 
-> February has 40, the lowest value; next is January with 80.  
+> March has 150, the highest value; next is February with 110.  
 > _features: kind=2, cells=5, valid=1_
 
 ---
 
 **table-reading:2:2001**
 
-_Website visitors per month (shown as a table)_
+_Website visitors per month (shown as a bar chart)_
 
 | Month | Visitors (thousands) |
 | --- | ---: |
-| January | 140 |
-| February | 50 |
-| March | 90 |
-| April | 70 |
-| May | 110 |
+| January | 50 |
+| February | 90 |
+| March | 70 |
+| April | 110 |
+| May | 40 |
 
 In which month were the most visitors recorded?
 
-A. April  
-B. March  
-C. May  
+A. May  
+B. January  
+C. March  
 D. February  
-E. January ✅
+E. April ✅
 
-> January has 140, the highest value; next is May with 110.  
+> April has 110, the highest value; next is February with 90.  
 > _features: kind=2, cells=5, valid=1_
 
 ---
 
 **table-reading:2:2002**
 
-_Support tickets per month (shown as a bar chart)_
+_Support tickets per month (shown as a table)_
 
 | Month | Tickets |
 | --- | ---: |
-| January | 80 |
-| February | 190 |
-| March | 180 |
-| April | 40 |
-| May | 150 |
+| January | 150 |
+| February | 60 |
+| March | 200 |
+| April | 120 |
+| May | 120 |
 
-In which month were the fewest tickets received?
+How many more tickets were received in March than in February?
 
-A. February  
-B. May  
-C. January  
-D. March  
-E. April ✅
+A. 60  
+B. 130  
+C. 200  
+D. 260  
+E. 140 ✅
 
-> April has 40, the lowest value; next is January with 80.  
-> _features: kind=2, cells=5, valid=1_
+> March: 200. February: 60. 200 − 60 = 140.  
+> _features: kind=2, cells=2, valid=1_
 
 ---
 
 **table-reading:2:2003**
 
-_Support tickets per month (shown as a table)_
+_Units sold per month (shown as a bar chart)_
 
-| Month | Tickets |
+| Month | Units |
 | --- | ---: |
-| January | 110 |
-| February | 40 |
-| March | 110 |
-| April | 150 |
-| May | 130 |
+| January | 140 |
+| February | 90 |
+| March | 90 |
+| April | 70 |
+| May | 200 |
 
-In which month were the most tickets received?
+In which month were the most units sold?
 
-A. May  
+A. February  
 B. January  
-C. February  
-D. April ✅  
-E. March
+C. May ✅  
+D. March  
+E. April
 
-> April has 150, the highest value; next is May with 130.  
+> May has 200, the highest value; next is January with 140.  
 > _features: kind=2, cells=5, valid=1_
 
 ## Level 3
 
 **table-reading:3:3000**
 
-_Website visitors per month (shown as a table)_
+_Units sold per month (shown as a bar chart)_
 
-| Month | Visitors (thousands) |
+| Month | Units |
 | --- | ---: |
-| January | 40 |
-| February | 130 |
-| March | 70 |
-| April | 100 |
-| May | 90 |
+| January | 130 |
+| February | 160 |
+| March | 60 |
+| April | 90 |
+| May | 40 |
 
-By what percentage did the number of visitors recorded increase from January to March?
+By what percentage did the number of units sold increase from March to April?
 
-A. 75% ✅  
-B. 85%  
-C. 70%  
-D. 80%  
-E. 30%
+A. 55%  
+B. 25%  
+C. 30%  
+D. 45%  
+E. 50% ✅
 
-> 70 − 40 = 30. Divided by the starting value: 30 ÷ 40 = 75%.  
+> 90 − 60 = 30. Divided by the starting value: 30 ÷ 60 = 50%.  
 > _features: kind=3, cells=2, valid=1_
 
 ---
 
 **table-reading:3:3001**
 
-_Website visitors per month (shown as a table)_
-
-| Month | Visitors (thousands) |
-| --- | ---: |
-| January | 60 |
-| February | 40 |
-| March | 66 |
-| April | 120 |
-| May | 50 |
-
-By what percentage did the number of visitors recorded increase from January to March?
-
-A. 15%  
-B. 6%  
-C. 10% ✅  
-D. 20%  
-E. 5%
-
-> 66 − 60 = 6. Divided by the starting value: 6 ÷ 60 = 10%.  
-> _features: kind=3, cells=2, valid=1_
-
----
-
-**table-reading:3:3002**
-
-_Support tickets per month (shown as a bar chart)_
-
-| Month | Tickets |
-| --- | ---: |
-| January | 90 |
-| February | 80 |
-| March | 80 |
-| April | 100 |
-| May | 90 |
-
-By what percentage did the number of tickets received increase from February to April?
-
-A. 20%  
-B. 25% ✅  
-C. 30%  
-D. 15%  
-E. 35%
-
-> 100 − 80 = 20. Divided by the starting value: 20 ÷ 80 = 25%.  
-> _features: kind=3, cells=2, valid=1_
-
----
-
-**table-reading:3:3003**
-
-_Units sold per month (shown as a bar chart)_
+_Units sold per month (shown as a table)_
 
 | Month | Units |
 | --- | ---: |
 | January | 40 |
 | February | 50 |
 | March | 120 |
-| April | 70 |
-| May | 40 |
+| April | 48 |
+| May | 140 |
 
 By what percentage did the number of units sold increase from January to April?
 
-A. 70%  
-B. 80%  
-C. 85%  
-D. 75% ✅  
-E. 30%
+A. 25%  
+B. 8%  
+C. 20% ✅  
+D. 15%  
+E. 10%
 
-> 70 − 40 = 30. Divided by the starting value: 30 ÷ 40 = 75%.  
+> 48 − 40 = 8. Divided by the starting value: 8 ÷ 40 = 20%.  
+> _features: kind=3, cells=2, valid=1_
+
+---
+
+**table-reading:3:3002**
+
+_Support tickets per month (shown as a table)_
+
+| Month | Tickets |
+| --- | ---: |
+| January | 90 |
+| February | 80 |
+| March | 60 |
+| April | 90 |
+| May | 90 |
+
+By what percentage did the number of tickets received increase from March to May?
+
+A. 30%  
+B. 50% ✅  
+C. 25%  
+D. 45%  
+E. 55%
+
+> 90 − 60 = 30. Divided by the starting value: 30 ÷ 60 = 50%.  
+> _features: kind=3, cells=2, valid=1_
+
+---
+
+**table-reading:3:3003**
+
+_Support tickets per month (shown as a bar chart)_
+
+| Month | Tickets |
+| --- | ---: |
+| January | 100 |
+| February | 120 |
+| March | 150 |
+| April | 40 |
+| May | 160 |
+
+By what percentage did the number of tickets received increase from January to March?
+
+A. 25%  
+B. 45%  
+C. 60%  
+D. 55%  
+E. 50% ✅
+
+> 150 − 100 = 50. Divided by the starting value: 50 ÷ 100 = 50%.  
 > _features: kind=3, cells=2, valid=1_
 
 ## Level 4
@@ -310,19 +310,19 @@ _Monthly sales (units) (shown as a table)_
 
 | Month | North store | South store |
 | --- | ---: | ---: |
-| January | 70 | 30 |
-| February | 30 | 60 |
-| March | 30 | 80 |
+| January | 30 | 30 |
+| February | 60 | 30 |
+| March | 80 | 60 |
 
-By how much did the combined total of North store and South store grow from February to March?
+By how much did the combined total of North store and South store grow from January to February?
 
-A. 30  
+A. 40  
 B. 0  
-C. 10  
-D. 110  
-E. 20 ✅
+C. 20  
+D. 90  
+E. 30 ✅
 
-> February: 30 + 60 = 90. March: 30 + 80 = 110. Growth: 110 − 90 = 20.  
+> January: 30 + 30 = 60. February: 60 + 30 = 90. Growth: 90 − 60 = 30.  
 > _features: kind=4, cells=4, valid=1_
 
 ---
@@ -331,21 +331,21 @@ E. 20 ✅
 
 _Monthly sales (units) (shown as a table)_
 
-| Month | Product A | Product B |
+| Month | North store | South store |
 | --- | ---: | ---: |
-| January | 50 | 40 |
-| February | 80 | 40 |
-| March | 60 | 40 |
+| January | 80 | 80 |
+| February | 30 | 40 |
+| March | 40 | 70 |
 
-By how much did the combined total of Product A and Product B grow from January to March?
+By how much did the combined total of North store and South store grow from February to March?
 
 A. 20  
-B. 30  
-C. 0  
-D. 100  
-E. 10 ✅
+B. 40 ✅  
+C. 110  
+D. 10  
+E. 30
 
-> January: 50 + 40 = 90. March: 60 + 40 = 100. Growth: 100 − 90 = 10.  
+> February: 30 + 40 = 70. March: 40 + 70 = 110. Growth: 110 − 70 = 40.  
 > _features: kind=4, cells=4, valid=1_
 
 ---
@@ -354,21 +354,21 @@ E. 10 ✅
 
 _Monthly sales (units) (shown as a table)_
 
-| Month | Online | In store |
+| Month | Product A | Product B |
 | --- | ---: | ---: |
-| January | 90 | 50 |
-| February | 70 | 90 |
-| March | 80 | 30 |
+| January | 70 | 30 |
+| February | 50 | 60 |
+| March | 30 | 30 |
 
-By how much did the combined total of Online and In store grow from January to February?
+By how much did the combined total of Product A and Product B grow from January to February?
 
-A. 20 ✅  
-B. 60  
-C. 160  
-D. 40  
+A. 10 ✅  
+B. 50  
+C. 20  
+D. 110  
 E. 30
 
-> January: 90 + 50 = 140. February: 70 + 90 = 160. Growth: 160 − 140 = 20.  
+> January: 70 + 30 = 100. February: 50 + 60 = 110. Growth: 110 − 100 = 10.  
 > _features: kind=4, cells=4, valid=1_
 
 ---
@@ -377,115 +377,115 @@ E. 30
 
 _Monthly sales (units) (shown as a table)_
 
-| Month | Product A | Product B |
+| Month | Online | In store |
 | --- | ---: | ---: |
-| January | 80 | 60 |
-| February | 70 | 50 |
-| March | 80 | 50 |
+| January | 40 | 80 |
+| February | 40 | 40 |
+| March | 50 | 90 |
 
-By how much did the combined total of Product A and Product B grow from February to March?
+By how much did the combined total of Online and In store grow from February to March?
 
-A. 10 ✅  
-B. 30  
-C. 0  
-D. 20  
-E. 130
+A. 40  
+B. 10  
+C. 140  
+D. 60 ✅  
+E. 50
 
-> February: 70 + 50 = 120. March: 80 + 50 = 130. Growth: 130 − 120 = 10.  
+> February: 40 + 40 = 80. March: 50 + 90 = 140. Growth: 140 − 80 = 60.  
 > _features: kind=4, cells=4, valid=1_
 
 ## Level 5
 
 **table-reading:5:5000**
 
-_Units sold per month (shown as a bar chart)_
+_Support tickets per month (shown as a table)_
 
-| Month | Units |
+| Month | Tickets |
 | --- | ---: |
-| January | 140 |
-| February | 170 |
-| March | 30 |
-| April | 60 |
-| May | 70 |
+| January | 50 |
+| February | 110 |
+| March | 200 |
+| April | 180 |
+| May | 110 |
 
 Between which two consecutive months was the percentage increase the largest?
 
-A. April → May  
-B. March → April ✅  
-C. January → February  
-D. February → March
+A. February → March  
+B. March → April  
+C. April → May  
+D. January → February ✅
 
-> Percentage changes: January → February +21%, February → March -82%, March → April +100%, April → May +17%. The largest is March → April, even though January → February has the biggest rise in absolute terms (30).  
+> Percentage changes: January → February +120%, February → March +82%, March → April -10%, April → May -39%. The largest is January → February, even though February → March has the biggest rise in absolute terms (90).  
 > _features: kind=5, cells=5, valid=1_
 
 ---
 
 **table-reading:5:5001**
 
-_Units sold per month (shown as a table)_
+_Website visitors per month (shown as a bar chart)_
 
-| Month | Units |
+| Month | Visitors (thousands) |
 | --- | ---: |
-| January | 100 |
-| February | 130 |
-| March | 200 |
-| April | 50 |
-| May | 100 |
+| January | 120 |
+| February | 160 |
+| March | 40 |
+| April | 90 |
+| May | 160 |
 
 Between which two consecutive months was the percentage increase the largest?
 
-A. April → May ✅  
-B. March → April  
-C. February → March  
+A. February → March  
+B. March → April ✅  
+C. April → May  
 D. January → February
 
-> Percentage changes: January → February +30%, February → March +54%, March → April -75%, April → May +100%. The largest is April → May, even though February → March has the biggest rise in absolute terms (70).  
+> Percentage changes: January → February +33%, February → March -75%, March → April +125%, April → May +78%. The largest is March → April, even though April → May has the biggest rise in absolute terms (70).  
 > _features: kind=5, cells=5, valid=1_
 
 ---
 
 **table-reading:5:5002**
 
-_Units sold per month (shown as a bar chart)_
+_Website visitors per month (shown as a table)_
 
-| Month | Units |
+| Month | Visitors (thousands) |
 | --- | ---: |
 | January | 90 |
-| February | 190 |
-| March | 150 |
-| April | 30 |
-| May | 80 |
+| February | 120 |
+| March | 200 |
+| April | 70 |
+| May | 150 |
 
 Between which two consecutive months was the percentage increase the largest?
 
-A. February → March  
-B. April → May ✅  
-C. March → April  
-D. January → February
+A. March → April  
+B. January → February  
+C. April → May ✅  
+D. February → March
 
-> Percentage changes: January → February +111%, February → March -21%, March → April -80%, April → May +167%. The largest is April → May, even though January → February has the biggest rise in absolute terms (100).  
+> Percentage changes: January → February +33%, February → March +67%, March → April -65%, April → May +114%. The largest is April → May, even though February → March has the biggest rise in absolute terms (80).  
 > _features: kind=5, cells=5, valid=1_
 
 ---
 
 **table-reading:5:5003**
 
-_Website visitors per month (shown as a table)_
+_Website visitors per month (shown as a bar chart)_
 
 | Month | Visitors (thousands) |
 | --- | ---: |
-| January | 170 |
-| February | 30 |
-| March | 150 |
-| April | 50 |
-| May | 180 |
+| January | 30 |
+| February | 150 |
+| March | 50 |
+| April | 180 |
+| May | 130 |
 
 Between which two consecutive months was the percentage increase the largest?
 
-A. February → March ✅  
-B. April → May  
-C. January → February  
-D. March → April
+A. March → April  
+B. January → February ✅  
+C. April → May  
+D. February → March
 
-> Percentage changes: January → February -82%, February → March +400%, March → April -67%, April → May +260%. The largest is February → March, even though April → May has the biggest rise in absolute terms (130).  
+> Percentage changes: January → February +400%, February → March -67%, March → April +260%, April → May -28%. The largest is January → February, even though March → April has the biggest rise in absolute terms (130).  
 > _features: kind=5, cells=5, valid=1_

@@ -65,6 +65,26 @@ describe('generateQuestion', () => {
     expect(generateQuestion(tfu, 1, 1).choices).toHaveLength(3);
   });
 
+  it('keeps fixedChoices in their given order', () => {
+    const fixed: Generator = {
+      ...addition,
+      type: 'toy-fixed',
+      draft: () => ({
+        prompt: 'Is it?',
+        answer: text('Uncertain'),
+        distractors: [],
+        explanation: 'Because.',
+        features: { digits: 1 },
+        fixedChoices: ['True', 'False', 'Uncertain'].map(text),
+      }),
+    };
+    for (let seed = 0; seed < 20; seed++) {
+      const q = generateQuestion(fixed, 1, seed);
+      expect(q.choices.map((c) => c.text)).toEqual(['True', 'False', 'Uncertain']);
+      expect(q.answerIndex).toBe(2);
+    }
+  });
+
   it('throws when the target level is unreachable', () => {
     expect(() => generateQuestion(addition, 5, 1)).toThrow(/no level-5 question/);
   });
@@ -72,7 +92,7 @@ describe('generateQuestion', () => {
   it('skips drafts without enough distinct distractors', () => {
     const thin: Generator = {
       ...addition,
-      draft: (rng, target) => ({ ...addition.draft(rng, target), distractors: [text(0), text(0)] }),
+      draft: (rng, target, variant) => ({ ...addition.draft(rng, target, variant), distractors: [text(0), text(0)] }),
     };
     expect(() => generateQuestion(thin, 1, 1)).toThrow();
   });

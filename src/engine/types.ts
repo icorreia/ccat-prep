@@ -49,6 +49,11 @@ export interface Draft {
   features: Features;
   /** Total number of choices shown; defaults to 5 (3 for True/False/Uncertain items). */
   choiceCount?: number;
+  /**
+   * Show the choices in this exact order instead of shuffling (e.g. True / False / Uncertain).
+   * Must contain the answer; `distractors` and `choiceCount` are then ignored.
+   */
+  fixedChoices?: Choice[];
 }
 
 export interface Generator {
@@ -57,8 +62,12 @@ export interface Generator {
   label: string;
   /** Levels this generator can produce. */
   levels: readonly Difficulty[];
-  /** Builds one candidate draft. `target` lets the generator bias its parameters toward a level. */
-  draft(rng: Rng, target: Difficulty): Draft;
+  /**
+   * Builds one candidate draft. `target` lets the generator bias its parameters toward a level.
+   * `variant` is a number in [0, 1) fixed for the whole question (it doesn't change between
+   * retries), so a generator can commit to a sub-kind or answer and keep the mix balanced.
+   */
+  draft(rng: Rng, target: Difficulty, variant: number): Draft;
   /** Maps measured features to a difficulty level; null rejects the draft (e.g. it broke a constraint). */
   score(features: Features): Difficulty | null;
 }
