@@ -8,6 +8,7 @@ import { SessionLog } from '../components/history/SessionLog';
 import { StatTiles } from '../components/history/StatTiles';
 import { TypeTable } from '../components/history/TypeTable';
 import { summarize } from '../engine/historyStats';
+import { importCalibration, loadCalibration, writeCalibration, type CalibrationEntry } from '../store/calibration';
 import { exportHistory, type StoredSession } from '../store/history';
 import { useHistory } from '../store/historyContext';
 
@@ -38,11 +39,16 @@ export function History() {
   const [days, setDays] = useState(0);
   const [now] = useState(Date.now);
   const sessions = useMemo(() => applyFilters(all, mode, days, now), [all, mode, days, now]);
+  const [calibration, setCalibration] = useState(loadCalibration);
+  const saveCalibration = (next: CalibrationEntry[]) => {
+    writeCalibration(next);
+    setCalibration(next);
+  };
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
 
   const download = () => {
-    const blob = new Blob([exportHistory(all)], { type: 'application/json' });
+    const blob = new Blob([exportHistory(all, calibration)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `ccat-prep-history-${new Date().toISOString().slice(0, 10)}.json`;
@@ -53,8 +59,13 @@ export function History() {
   const upload = async (file: File | undefined) => {
     if (!file) return;
     try {
-      const added = importJson(await file.text());
-      setMessage(`Imported ${added} new session${added === 1 ? '' : 's'}.`);
+      const json = await file.text();
+      const added = importJson(json);
+      const scores = importCalibration(json, calibration);
+      if (scores.added) saveCalibration(scores.entries);
+      setMessage(
+        `Imported ${added} new session${added === 1 ? '' : 's'}` + (scores.added ? ` and ${scores.added} official score${scores.added === 1 ? '' : 's'}.` : '.'),
+      );
     } catch (e) {
       setMessage(e instanceof Error ? e.message : 'Could not read that file.');
     }
@@ -134,10 +145,10 @@ export function History() {
       )}
 
       <h2>Official practice test</h2>
-      <Calibration sessions={all} />
+      <Calibration sessions={all} entries={calibration} save={saveCalibration} />
 
       <h2>Backup</h2>
-      <p className="muted small">History lives in this browser only. Export it to keep a copy or move it to another device.</p>
+      <p className="muted small">History and official scores live in this browser only. Export them to keep a copy or move them to another device.</p>
       <div className="toolbar">
         <button type="button" onClick={download}>
           Export JSON
