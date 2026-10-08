@@ -15,7 +15,7 @@ D. 270
 E. 1350
 
 > 50% of 270 = 50/100 × 270 = 135.  
-> _features: kind=1, friendly=1, steps=1, valid=1_
+> _features: kind=1, friendly=1, steps=1, successive=0, valid=1_
 
 ---
 
@@ -30,7 +30,7 @@ D. 10
 E. 110
 
 > 10% of 110 = 10/100 × 110 = 11.  
-> _features: kind=1, friendly=1, steps=1, valid=1_
+> _features: kind=1, friendly=1, steps=1, successive=0, valid=1_
 
 ---
 
@@ -45,7 +45,7 @@ D. 60 ✅
 E. 66
 
 > 50% of 120 = 50/100 × 120 = 60.  
-> _features: kind=1, friendly=1, steps=1, valid=1_
+> _features: kind=1, friendly=1, steps=1, successive=0, valid=1_
 
 ---
 
@@ -60,7 +60,7 @@ D. 1050
 E. 75
 
 > 75% of 140 = 75/100 × 140 = 105.  
-> _features: kind=1, friendly=1, steps=1, valid=1_
+> _features: kind=1, friendly=1, steps=1, successive=0, valid=1_
 
 ## Level 2
 
@@ -75,7 +75,7 @@ D. 60
 E. 16
 
 > 60% of 40 = 60/100 × 40 = 24.  
-> _features: kind=1, friendly=0, steps=1, valid=1_
+> _features: kind=1, friendly=0, steps=1, successive=0, valid=1_
 
 ---
 
@@ -90,37 +90,37 @@ D. 114
 E. 76 ✅
 
 > 40% of 190 = 40/100 × 190 = 76.  
-> _features: kind=1, friendly=0, steps=1, valid=1_
+> _features: kind=1, friendly=0, steps=1, successive=0, valid=1_
 
 ---
 
 **percentage:2:2002**
 
-What is 5% of 100?
+60 is what percentage of 300?
 
-A. 50  
-B. 95  
-C. 10  
-D. 5 ✅  
-E. 4
+A. 240%  
+B. 500%  
+C. 80%  
+D. 20% ✅  
+E. 15%
 
-> 5% of 100 = 5/100 × 100 = 5.  
-> _features: kind=1, friendly=0, steps=1, valid=1_
+> Part ÷ whole: 60 ÷ 300 = 0.2, which is 20%.  
+> _features: kind=2, friendly=1, steps=1, successive=0, valid=1_
 
 ---
 
 **percentage:2:2003**
 
-What is 15% of 140?
+5 is what percentage of 20?
 
-A. 15  
-B. 210  
-C. 42  
-D. 119  
-E. 21 ✅
+A. 15%  
+B. 25% ✅  
+C. 400%  
+D. 30%  
+E. 75%
 
-> 15% of 140 = 15/100 × 140 = 21.  
-> _features: kind=1, friendly=0, steps=1, valid=1_
+> Part ÷ whole: 5 ÷ 20 = 0.25, which is 25%.  
+> _features: kind=2, friendly=1, steps=1, successive=0, valid=1_
 
 ## Level 3
 
@@ -135,22 +135,22 @@ D. 4%
 E. 15%
 
 > The change is $4. Divide by the original price: 4 ÷ 40 = 10%. (Dividing by the new price, 36, is the common mistake.)  
-> _features: kind=3, friendly=1, steps=2, valid=1_
+> _features: kind=3, friendly=1, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:3:3001**
 
-After a 10% discount, an item costs $18. What was the price before?
+A price rises from $20 to $22. What is the percentage increase?
 
-A. $16  
-B. $28  
-C. $22  
-D. $18  
-E. $20 ✅
+A. 0%  
+B. 2%  
+C. 15%  
+D. 5%  
+E. 10% ✅
 
-> The new price is 90% of the old one, so the old price is 18 ÷ 0.9 = $20.  
-> _features: kind=3, friendly=1, steps=2, valid=1_
+> The change is $2. Divide by the original price: 2 ÷ 20 = 10%. (Dividing by the new price, 22, is the common mistake.)  
+> _features: kind=3, friendly=1, steps=2, successive=0, valid=1_
 
 ---
 
@@ -165,52 +165,52 @@ D. $136
 E. $176
 
 > The new price is 120% of the old one, so the old price is 156 ÷ 1.2 = $130.  
-> _features: kind=3, friendly=1, steps=2, valid=1_
+> _features: kind=3, friendly=1, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:3:3003**
 
-A price rises from $250 to $312.5. What is the percentage increase?
+180 is what percentage of 400?
 
-A. 35%  
-B. 30%  
-C. 20%  
-D. 15%  
-E. 25% ✅
+A. 40%  
+B. 55%  
+C. 45% ✅  
+D. 220%  
+E. 50%
 
-> The change is $62.5. Divide by the original price: 62.5 ÷ 250 = 25%. (Dividing by the new price, 312.5, is the common mistake.)  
-> _features: kind=3, friendly=1, steps=2, valid=1_
+> Part ÷ whole: 180 ÷ 400 = 0.45, which is 45%.  
+> _features: kind=2, friendly=0, steps=1, successive=0, valid=1_
 
 ## Level 4
 
 **percentage:4:4000**
 
-A price falls from $80 to $68. What is the percentage decrease?
+A bank raises its interest rate from 20% to 30%. By what percentage did the interest rate increase?
 
-A. 25%  
-B. 10%  
-C. 12%  
-D. 15% ✅  
-E. 20%
+A. 30%  
+B. 45%  
+C. 10%  
+D. 55%  
+E. 50% ✅
 
-> The change is $12. Divide by the original price: 12 ÷ 80 = 15%. (Dividing by the new price, 68, is the common mistake.)  
-> _features: kind=3, friendly=0, steps=2, valid=1_
+> The rate rose by 10 percentage points. As a share of the old rate: 10 ÷ 20 = 50%.  
+> _features: kind=4, friendly=1, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:4:4001**
 
-A price falls from $120 to $114. What is the percentage decrease?
+After a 5% increase, an item costs $210. What was the price before?
 
-A. 10%  
-B. 0%  
-C. 15%  
-D. 6%  
-E. 5% ✅
+A. $205  
+B. $215  
+C. $180  
+D. $200 ✅  
+E. $220
 
-> The change is $6. Divide by the original price: 6 ÷ 120 = 5%. (Dividing by the new price, 114, is the common mistake.)  
-> _features: kind=3, friendly=0, steps=2, valid=1_
+> The new price is 105% of the old one, so the old price is 210 ÷ 1.05 = $200.  
+> _features: kind=3, friendly=0, steps=2, successive=0, valid=1_
 
 ---
 
@@ -225,79 +225,79 @@ D. 25%
 E. 40%
 
 > The change is $17.5. Divide by the original price: 17.5 ÷ 50 = 35%. (Dividing by the new price, 67.5, is the common mistake.)  
-> _features: kind=3, friendly=0, steps=2, valid=1_
+> _features: kind=3, friendly=0, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:4:4003**
 
-After a 40% discount, an item costs $168. What was the price before?
+A price is increased by 10% and then increased by 50%. What is the overall change?
 
-A. $224  
-B. $208  
-C. $280 ✅  
-D. $308  
-E. $252
+A. 63% increase  
+B. 65% increase ✅  
+C. 60% increase  
+D. 67% increase  
+E. 65% decrease
 
-> The new price is 60% of the old one, so the old price is 168 ÷ 0.6 = $280.  
-> _features: kind=3, friendly=0, steps=2, valid=1_
+> Multiply the factors: 1.1 × 1.5 = 1.65, which is a 65% increase. Adding the percentages (60% increase) ignores that each change applies to a different base.  
+> _features: kind=4, friendly=1, steps=2, successive=1, valid=1_
 
 ## Level 5
 
 **percentage:5:5000**
 
-A price is increased by 20%, then decreased by 50% and then decreased by 30%. What is the overall change?
+A's salary is 400% higher than B's. By what percentage is B's salary lower than A's?
 
-A. 58% decrease ✅  
-B. 60% decrease  
-C. 58% increase  
-D. 56% decrease  
-E. 53% decrease
+A. 75%  
+B. 85%  
+C. 20%  
+D. 400%  
+E. 80% ✅
 
-> Multiply the factors: 1.2 × 0.5 × 0.7 = 0.42, which is a 58% decrease. Adding the percentages (60% decrease) ignores that each change applies to a different base.  
-> _features: kind=4, friendly=0, steps=3, valid=1_
+> Say B earns 100. Then A earns 500. B is 400 lower, and 400 ÷ 500 = 80% of A's salary.  
+> _features: kind=4, friendly=0, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:5:5001**
 
-A price is decreased by 50%, then increased by 20% and then decreased by 50%. What is the overall change?
+A's salary is 400% higher than B's. By what percentage is B's salary lower than A's?
 
-A. 68% decrease  
-B. 70% increase  
-C. 70% decrease ✅  
-D. 72% decrease  
-E. 80% decrease
+A. 400%  
+B. 80% ✅  
+C. 75%  
+D. 20%  
+E. 85%
 
-> Multiply the factors: 0.5 × 1.2 × 0.5 = 0.3, which is a 70% decrease. Adding the percentages (80% decrease) ignores that each change applies to a different base.  
-> _features: kind=4, friendly=1, steps=3, valid=1_
+> Say B earns 100. Then A earns 500. B is 400 lower, and 400 ÷ 500 = 80% of A's salary.  
+> _features: kind=4, friendly=0, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:5:5002**
 
-A price is decreased by 20%, then decreased by 10% and then decreased by 50%. What is the overall change?
+A's salary is 300% higher than B's. By what percentage is B's salary lower than A's?
 
-A. 66% decrease  
-B. 80% decrease  
-C. 64% decrease ✅  
-D. 64% increase  
-E. 62% decrease
+A. 80%  
+B. 300%  
+C. 25%  
+D. 70%  
+E. 75% ✅
 
-> Multiply the factors: 0.8 × 0.9 × 0.5 = 0.36, which is a 64% decrease. Adding the percentages (80% decrease) ignores that each change applies to a different base.  
-> _features: kind=4, friendly=1, steps=3, valid=1_
+> Say B earns 100. Then A earns 400. B is 300 lower, and 300 ÷ 400 = 75% of A's salary.  
+> _features: kind=4, friendly=0, steps=2, successive=0, valid=1_
 
 ---
 
 **percentage:5:5003**
 
-A price is decreased by 50%, then increased by 20% and then increased by 50%. What is the overall change?
+A's salary is 400% higher than B's. By what percentage is B's salary lower than A's?
 
-A. 12% decrease  
-B. 8% decrease  
-C. 20% increase  
-D. 10% increase  
-E. 10% decrease ✅
+A. 400%  
+B. 75%  
+C. 85%  
+D. 80% ✅  
+E. 20%
 
-> Multiply the factors: 0.5 × 1.2 × 1.5 = 0.9, which is a 10% decrease. Adding the percentages (20% increase) ignores that each change applies to a different base.  
-> _features: kind=4, friendly=1, steps=3, valid=1_
+> Say B earns 100. Then A earns 500. B is 400 lower, and 400 ÷ 500 = 80% of A's salary.  
+> _features: kind=4, friendly=0, steps=2, successive=0, valid=1_
