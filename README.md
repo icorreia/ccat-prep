@@ -6,7 +6,7 @@ Questions are generated procedurally, so every test is new. The app runs entirel
 
 ## Getting started
 
-Requires Node 22+ (see `.nvmrc`).
+Requires Node 24 (see `.nvmrc`).
 
 ```sh
 npm install
