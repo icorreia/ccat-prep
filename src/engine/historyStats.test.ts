@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { pacingByPosition, pointsBreakdown, rollingAverage, slowQuestions, summarize, type SessionLike } from './historyStats';
+import {
+  pacingByPosition,
+  pointsBreakdown,
+  recentAverageAt,
+  rollingAverage,
+  slowQuestions,
+  summarize,
+  typeStats,
+  weakestTypes,
+  type SessionLike,
+} from './historyStats';
 import type { Attempt } from './types';
 
 const session = (startedAt: number, correct: number, mode = 'test'): SessionLike => ({
@@ -90,5 +100,42 @@ describe('slowQuestions', () => {
         { type: 'ratio', count: 1 },
       ],
     });
+  });
+});
+
+describe('typeStats', () => {
+  it('counts attempts, accuracy and median time on correct answers per type', () => {
+    const s = timed(1, [
+      attempt(0, { type: 'ratio', timeMs: 10_000 }),
+      attempt(1, { type: 'ratio', correct: false }),
+      attempt(2, { type: 'ratio', timeMs: 20_000 }),
+      attempt(3, { type: 'matrix', choiceIndex: null, correct: false }),
+    ]);
+    const stats = Object.fromEntries(typeStats([s]).map((t) => [t.type, t]));
+    expect(stats.ratio).toEqual({ type: 'ratio', attempts: 3, answered: 3, accuracy: 2 / 3, medianCorrectMs: 15_000, trend: null });
+    expect(stats.matrix).toMatchObject({ attempts: 1, answered: 0, accuracy: null, medianCorrectMs: null });
+  });
+
+  it('compares the last 10 answers with the 10 before them, oldest session first', () => {
+    const answers = (startedAt: number, correct: boolean) =>
+      timed(startedAt, Array.from({ length: 10 }, (_, i) => attempt(i, { correct })), 'drill');
+    const [stat] = typeStats([answers(2, true), answers(1, false)]);
+    expect(stat!.trend).toBe(1);
+  });
+});
+
+describe('weakestTypes', () => {
+  it('picks the lowest accuracy among types with at least 5 answers', () => {
+    const stat = (type: string, answered: number, accuracy: number) => ({ type, attempts: answered, answered, accuracy, medianCorrectMs: null, trend: null });
+    const weak = weakestTypes([stat('a', 5, 0.9), stat('b', 5, 0.4), stat('c', 4, 0.1), stat('d', 9, 0.5)], 2);
+    expect([...weak]).toEqual(['b', 'd']);
+  });
+});
+
+describe('recentAverageAt', () => {
+  it('averages the last 5 full tests up to a time', () => {
+    const sessions = [10, 20, 30].map((score, i) => session(i * 10, score));
+    expect(recentAverageAt(sessions, 15)).toBe(15);
+    expect(recentAverageAt(sessions, -1)).toBeNull();
   });
 });
