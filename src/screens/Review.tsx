@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
+import { toSession } from '../store/history';
+import { useHistory } from '../store/historyContext';
 import { QuestionView } from '../components/QuestionView';
 import { isFinished, type Session } from '../engine/session';
 import type { Attempt } from '../engine/types';
@@ -51,6 +53,32 @@ export function ReviewList({ session }: { session: Session }) {
         </div>
       ))}
     </>
+  );
+}
+
+/** Review of a past session from History. */
+export function PastReview() {
+  const { id } = useParams();
+  const { sessions } = useHistory();
+  const stored = sessions.find((s) => s.id === id);
+  const session = stored && toSession(stored);
+  if (!session) {
+    return (
+      <section>
+        <h1>Review not available</h1>
+        <p className="muted">This session isn't in your history, or its questions weren't kept.</p>
+        <Link to="/history">Back to history</Link>
+      </section>
+    );
+  }
+  return (
+    <section>
+      <h1>Review</h1>
+      <p className="muted">
+        {stored.label} · {new Date(stored.startedAt).toLocaleString()} · <Link to="/history">Back to history</Link>
+      </p>
+      <ReviewList session={session} />
+    </section>
   );
 }
 

@@ -652,3 +652,22 @@ table.stats .num {
   color: var(--text);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
 }
+
+.table-scroll {
+  overflow-x: auto;
+  /* Contains absolutely positioned children (e.g. .visually-hidden headers), which would otherwise widen the page. */
+  position: relative;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
