@@ -2,6 +2,7 @@ import { Link, NavLink, Route, Routes } from 'react-router';
 import { Gallery } from './screens/Gallery';
 import { Home } from './screens/Home';
 import { Results } from './screens/Results';
+import { Review } from './screens/Review';
 import { TestRunner } from './screens/TestRunner';
 import { SessionProvider } from './store/session';
 
@@ -23,6 +24,7 @@ export function App() {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/test" element={<TestRunner />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/review" element={<Review />} />
           </Routes>
         </main>
       </div>
