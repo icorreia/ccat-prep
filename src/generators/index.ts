@@ -3,8 +3,17 @@ import { average } from './math/average';
 import { fractionGenerator } from './math/fraction';
 import { numberSeries } from './math/numberSeries';
 import { percentage } from './math/percentage';
+import { ratioGenerator } from './math/ratio';
+import { wordProblem } from './math/wordProblem';
 
-export const GENERATORS: readonly Generator[] = [numberSeries, average, percentage, fractionGenerator];
+export const GENERATORS: readonly Generator[] = [
+  numberSeries,
+  average,
+  percentage,
+  fractionGenerator,
+  ratioGenerator,
+  wordProblem,
+];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));
 
