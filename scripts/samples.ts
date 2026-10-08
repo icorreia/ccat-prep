@@ -28,7 +28,7 @@ function render(q: Question): string {
     `**${q.id}**`,
     '',
     ...(q.table ? [renderTable(q.table), ''] : []),
-    q.prompt.replace(/\n\n/g, '  \n'),
+    q.prompt.replace(/\n+/g, '  \n'),
     '',
     choices,
     '',

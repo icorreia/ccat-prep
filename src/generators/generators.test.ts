@@ -44,8 +44,13 @@ describe.each(GENERATORS.map((g) => [g.type, g] as const))('%s', (_type, generat
   });
 
   it('places the answer at every position across seeds', () => {
-    const positions = new Set(questions.map((q) => q.answerIndex));
-    expect(positions.size).toBe(questions[0]!.choices.length);
+    // Grouped by choice count: some types vary it (e.g. 3–5 people in ordering puzzles).
+    const positionsByCount = new Map<number, Set<number>>();
+    for (const q of questions) {
+      const set = positionsByCount.get(q.choices.length) ?? new Set();
+      positionsByCount.set(q.choices.length, set.add(q.answerIndex));
+    }
+    for (const [count, positions] of positionsByCount) expect(positions.size, `${count} choices`).toBe(count);
   });
 
   it('rebuilds identically from its id', () => {

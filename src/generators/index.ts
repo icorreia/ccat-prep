@@ -1,4 +1,6 @@
 import type { Generator } from '../engine/types';
+import { ordering } from './logic/ordering';
+import { syllogism } from './logic/syllogism';
 import { average } from './math/average';
 import { fractionGenerator } from './math/fraction';
 import { numberSeries } from './math/numberSeries';
@@ -15,6 +17,8 @@ export const GENERATORS: readonly Generator[] = [
   ratioGenerator,
   wordProblem,
   tableReading,
+  syllogism,
+  ordering,
 ];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));

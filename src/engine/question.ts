@@ -28,6 +28,11 @@ export function finalize(
   draft: Draft,
   rng: Rng,
 ): Question | null {
+  if (draft.fixedChoices) {
+    const answerIndex = draft.fixedChoices.findIndex((c) => choiceKey(c) === choiceKey(draft.answer));
+    if (answerIndex < 0) return null;
+    return build(generator, difficulty, seed, draft, draft.fixedChoices, answerIndex);
+  }
   const choiceCount = draft.choiceCount ?? DEFAULT_CHOICE_COUNT;
   const seen = new Set([choiceKey(draft.answer)]);
   const distractors: Choice[] = [];
@@ -41,6 +46,17 @@ export function finalize(
   if (distractors.length < choiceCount - 1) return null;
 
   const choices = rng.shuffle([draft.answer, ...distractors]);
+  return build(generator, difficulty, seed, draft, choices, choices.indexOf(draft.answer));
+}
+
+function build(
+  generator: Generator,
+  difficulty: Difficulty,
+  seed: number,
+  draft: Draft,
+  choices: Choice[],
+  answerIndex: number,
+): Question {
   return {
     id: questionId(generator.type, difficulty, seed),
     type: generator.type,
@@ -50,7 +66,7 @@ export function finalize(
     prompt: draft.prompt,
     ...(draft.table && { table: draft.table }),
     choices,
-    answerIndex: choices.indexOf(draft.answer),
+    answerIndex,
     explanation: draft.explanation,
     features: draft.features,
   };
@@ -62,8 +78,9 @@ export function finalize(
  */
 export function generateQuestion(generator: Generator, target: Difficulty, seed: number): Question {
   const rng = new Rng(seed);
+  const variant = rng.next();
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const draft = generator.draft(rng, target);
+    const draft = generator.draft(rng, target, variant);
     if (generator.score(draft.features) !== target) continue;
     const question = finalize(generator, target, seed, draft, rng);
     if (question) return question;
