@@ -10,7 +10,7 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 const seconds = (ms: number | null) => (ms === null ? '—' : `${(ms / 1000).toFixed(1)} s`);
 
 export function Results() {
-  const { session, startTest } = useSession();
+  const { session, lastConfig, start } = useSession();
   const navigate = useNavigate();
 
   if (!session || !isFinished(session)) {
@@ -31,7 +31,7 @@ export function Results() {
 
   return (
     <section>
-      <h1>Your score</h1>
+      <h1>{session.mode === 'test' ? 'Your score' : session.mode === 'speed' ? 'Speed training' : 'Practice'} results</h1>
       <div className="score">
         <span className="score-value">{s.score}</span>
         <span className="muted"> / {total}</span>
@@ -97,11 +97,11 @@ export function Results() {
           type="button"
           className="primary"
           onClick={() => {
-            startTest();
+            start(lastConfig ?? { kind: 'test' });
             navigate('/test');
           }}
         >
-          Take another test
+          {session.mode === 'test' ? 'Take another test' : 'Practice again'}
         </button>
       </div>
     </section>

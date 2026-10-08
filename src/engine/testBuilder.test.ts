@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { GENERATORS } from '../generators';
 import { Rng } from './rng';
-import { buildTest, categoryCounts, fingerprint, interleave, JITTER, MIX, rampLevel, TEST_LENGTH } from './testBuilder';
+import { buildDrill, buildTest, categoryCounts, fingerprint, interleave, JITTER, MIX, rampLevel, TEST_LENGTH } from './testBuilder';
 
 const tests = Array.from({ length: 30 }, (_, seed) => buildTest(GENERATORS, seed));
 
@@ -75,5 +75,31 @@ describe('helpers', () => {
 
   it('interleave breaks up triples', () => {
     expect(interleave(['a', 'a', 'a', 'b'], (x) => x)).toEqual(['a', 'a', 'b', 'a']);
+  });
+});
+
+describe('buildDrill', () => {
+  const series = GENERATORS.filter((g) => g.type === 'number-series');
+  const verbal = GENERATORS.filter((g) => g.category === 'verbal');
+
+  it('draws only from the chosen generators, at a fixed level', () => {
+    const qs = buildDrill({ generators: series, count: 10, level: 4 }, 1);
+    expect(qs).toHaveLength(10);
+    expect(qs.every((q) => q.type === 'number-series' && q.difficulty === 4)).toBe(true);
+  });
+
+  it('spreads a category evenly over its types', () => {
+    const qs = buildDrill({ generators: verbal, count: 20, level: 'ramp' }, 2);
+    for (const g of verbal) expect(qs.filter((q) => q.type === g.type)).toHaveLength(4);
+  });
+
+  it('uses the nearest supported level when a type lacks the requested one', () => {
+    const ratio = GENERATORS.filter((g) => g.type === 'ratio'); // levels 2–5
+    expect(buildDrill({ generators: ratio, count: 5, level: 1 }, 3).every((q) => q.difficulty === 2)).toBe(true);
+  });
+
+  it('never repeats an item', () => {
+    const qs = buildDrill({ generators: GENERATORS.filter((g) => g.type === 'analogy'), count: 30, level: 'ramp' }, 4);
+    expect(new Set(qs.map(fingerprint)).size).toBe(30);
   });
 });

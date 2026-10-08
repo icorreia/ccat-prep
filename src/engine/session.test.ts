@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { GENERATORS } from '../generators';
-import { isFinished, reduce, remainingMs, startSession } from './session';
+import { isFinished, questionRemainingMs, reduce, remainingMs, startSession } from './session';
 import { buildTest } from './testBuilder';
 
 const test = buildTest(GENERATORS, 3);
-const start = () => startSession(test.questions.slice(0, 3), 60_000, 1_000);
+const start = () => startSession(test.questions.slice(0, 3), { timeLimitMs: 60_000, perQuestionMs: null }, 1_000);
 
 describe('session', () => {
   it('records answers with timing and moves forward', () => {
@@ -49,5 +49,20 @@ describe('session', () => {
   it('reports remaining time', () => {
     expect(remainingMs(start(), 31_000)).toBe(30_000);
     expect(remainingMs(start(), 100_000)).toBe(0);
+  });
+
+  it('auto-advances on a per-question timeout and caps the recorded time', () => {
+    let s = startSession(test.questions.slice(0, 2), { timeLimitMs: null, perQuestionMs: 18_000 }, 0, 'speed');
+    expect(questionRemainingMs(s, 5_000)).toBe(13_000);
+    s = reduce(s, { type: 'questionTimeout', now: 20_000 });
+    expect(s.index).toBe(1);
+    expect(s.attempts[0]).toMatchObject({ choiceIndex: null, timeMs: 18_000 });
+    expect(s.questionStartedAt).toBe(18_000);
+  });
+
+  it('never times out an untimed session', () => {
+    const s = startSession(test.questions.slice(0, 2), { timeLimitMs: null, perQuestionMs: null }, 0, 'drill');
+    expect(remainingMs(s, 10 ** 9)).toBe(Infinity);
+    expect(reduce(s, { type: 'answer', choiceIndex: 0, now: 10 ** 9 }).index).toBe(1);
   });
 });
