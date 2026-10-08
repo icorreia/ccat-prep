@@ -52,7 +52,7 @@ The anchors (reference questions) below are original items written in the style 
 | 4 | 3, 4, 8, 17, 33, ? | 58 (gaps 1, 4, 9, 16, 25) |
 
 ### `word-problem`: short applied arithmetic
-- **Shape:** 1–2 sentences: rates, speed and distance, discounts, work, mixtures.
+- **Shape:** 1–2 sentences: scaling, trains meeting, combined work, round-trip average speed, ages. (Discount problems belong to `percentage`, reverse kind.)
 - **Numbers:** they divide cleanly, with at most one two-digit by two-digit multiplication.
 - **Features:** number of operations, size of the operands, whether you have to work backwards, unit conversions.
 - **Distractors:** working forwards instead of backwards, adding rates instead of their reciprocals, stopping one step early.
@@ -60,7 +60,7 @@ The anchors (reference questions) below are original items written in the style 
 | Level | Item | Answer |
 | --- | --- | --- |
 | 2 | A car travels 150 miles in 3 hours. At the same speed, how far does it travel in 5 hours? | 250 miles |
-| 3 | A shirt costs $40 after a 20% discount. What was the original price? | $50 (distractor: $48) |
+| 3 | Two trains 300 km apart travel toward each other at 60 km/h and 40 km/h. After how many hours do they meet? | 3 (distractor: 5, from 300 ÷ 60) |
 | 4 | Pipe A fills a tank in 6 hours and pipe B in 3 hours. How long do they take together? | 2 hours (distractor: 4.5) |
 
 ### `percentage`
