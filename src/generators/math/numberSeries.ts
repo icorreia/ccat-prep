@@ -1,4 +1,4 @@
-import { numericDistractors } from '../../engine/distractors';
+import { numericChoices, type Mistake } from '../../engine/distractors';
 import { text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
@@ -24,7 +24,7 @@ export interface Series {
   /** Terms shown, followed by the answer as the last element. */
   terms: number[];
   /** Plausible wrong next terms, most tempting first. */
-  mistakes: number[];
+  mistakes: Mistake[];
   rule: string;
 }
 
@@ -34,7 +34,7 @@ export function constant(start: number, step: number, shown: number): Series {
   return {
     family: 'constant',
     terms,
-    mistakes: [answer + step, answer - step + 1, answer + 1],
+    mistakes: [{ value: answer + step, why: `Added ${step} twice: that's the term after the next one.` }, answer - step + 1, answer + 1],
     rule: `add ${step} each time`,
   };
 }
@@ -47,7 +47,11 @@ export function geometric(start: number, ratio: number, shown: number): Series {
   return {
     family: 'geometric',
     terms,
-    mistakes: [last + (last - prev), answer + ratio, answer - last / 2],
+    mistakes: [
+      { value: last + (last - prev), why: `Added the last gap (${last - prev}) again. The terms multiply by ${ratio}, so the gaps grow too.` },
+      answer + ratio,
+      answer - last / 2,
+    ],
     rule: `multiply by ${ratio} each time`,
   };
 }
@@ -60,7 +64,11 @@ export function fibonacci(a: number, b: number, shown: number): Series {
   return {
     family: 'fibonacci',
     terms,
-    mistakes: [last + (last - terms[shown - 2]!), answer + 1, last * 2],
+    mistakes: [
+      { value: last + (last - terms[shown - 2]!), why: 'Repeated the last gap. Each term is the sum of the two before it, so the gaps keep changing.' },
+      answer + 1,
+      { value: last * 2, why: 'Doubled the last term. Add the two terms before it instead.' },
+    ],
     rule: 'each term is the sum of the two before it',
   };
 }
@@ -71,11 +79,17 @@ export function alternating(start: number, ops: [Op, Op], shown: number): Series
   for (let i = 0; i < shown; i++) terms.push(apply(ops[i % 2]!, terms[i]!));
   const answer = terms[shown]!;
   const last = terms[shown - 1]!;
-  const otherOp = ops[shown % 2 === 0 ? 1 : 0]!;
+  // The trap is repeating the operation that produced the last term instead of switching.
+  const repeatedOp = ops[shown % 2]!;
+  const nextOp = ops[(shown - 1) % 2]!;
   return {
     family: 'alternating',
     terms,
-    mistakes: [apply(otherOp, last), answer + 1, answer - 1],
+    mistakes: [
+      { value: apply(repeatedOp, last), why: `Applied ${describe(repeatedOp)} again. The operations alternate, so the next one is ${describe(nextOp)}.` },
+      answer + 1,
+      answer - 1,
+    ],
     rule: `alternate ${describe(ops[0])} and ${describe(ops[1])}`,
   };
 }
@@ -91,7 +105,11 @@ export function secondOrder(start: number, firstGap: number, growth: number | 's
   return {
     family: 'secondOrder',
     terms,
-    mistakes: [last + lastGap, answer + 1, answer + (growth === 'squares' ? 2 * shown - 1 : growth)],
+    mistakes: [
+      { value: last + lastGap, why: `Repeated the last gap (${lastGap}). The gaps themselves grow, so the next gap is ${gap(shown - 1)}.` },
+      answer + 1,
+      { value: answer + (growth === 'squares' ? 2 * shown - 1 : growth), why: `Grew the gap one step too far. The next gap is ${gap(shown - 1)}.` },
+    ],
     rule:
       growth === 'squares'
         ? 'the gaps are consecutive squares (1, 4, 9, 16, …)'
@@ -110,7 +128,14 @@ export function interleaved(a: number, stepA: number, b: number, stepB: number, 
   return {
     family: 'interleaved',
     terms,
-    mistakes: [otherNext, answer + (shown % 2 === 0 ? stepA : stepB), last + 1],
+    mistakes: [
+      {
+        value: otherNext,
+        why: `Continued the wrong one of the two series. The next term belongs to the series that adds ${shown % 2 === 0 ? stepA : stepB}.`,
+      },
+      { value: answer + (shown % 2 === 0 ? stepA : stepB), why: 'Went one term too far in its series.' },
+      last + 1,
+    ],
     rule: `two series alternate: one adds ${stepA}, the other adds ${stepB}`,
   };
 }
@@ -124,7 +149,11 @@ export function mixed(start: number, factor: number, shift: number, shown: numbe
   return {
     family: 'mixed',
     terms,
-    mistakes: [last * factor, last + (last - terms[shown - 2]!), answer - 2 * shift],
+    mistakes: [
+      { value: last * factor, why: `Multiplied by ${factor} but forgot to ${shift >= 0 ? `add ${shift}` : `subtract ${-shift}`}.` },
+      { value: last + (last - terms[shown - 2]!), why: 'Repeated the last gap. Each term is multiplied, so the gaps keep growing.' },
+      answer - 2 * shift,
+    ],
     rule: `multiply by ${factor}, then ${shift >= 0 ? `add ${shift}` : `subtract ${-shift}`}`,
   };
 }
@@ -188,7 +217,7 @@ export const numberSeries: Generator = {
       prompt: `What number comes next?\n\n${shown.join(', ')}, ?`,
       answer: text(answer),
       // Invalid drafts are rejected by score(), so don't build distractors for them.
-      distractors: valid ? numericDistractors(answer, series.mistakes, 4, rng).map(text) : [],
+      distractors: valid ? numericChoices(answer, series.mistakes, 4, rng) : [],
       explanation: `The rule is: ${series.rule}. So the next number is ${answer}.`,
       features: {
         family: FAMILIES[series.family],

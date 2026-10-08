@@ -169,11 +169,11 @@ E. 10
 What number comes next?  
 8, 14, 12, 18, 16, 22, ?
 
-A. 19  
-B. 18  
-C. 21  
+A. 21  
+B. 22  
+C. 28  
 D. 20 ✅  
-E. 22
+E. 19
 
 > The rule is: alternate +6 and −2. So the next number is 20.  
 > _features: family=3, largest=22, valid=1_
