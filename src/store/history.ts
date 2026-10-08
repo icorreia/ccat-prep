@@ -1,5 +1,6 @@
 import { isFinished, type Session, type SessionMode } from '../engine/session';
 import type { Attempt, Question } from '../engine/types';
+import type { CalibrationEntry } from './calibration';
 
 /** A finished session as stored in the browser. */
 export interface StoredSession {
@@ -29,7 +30,7 @@ export interface KeyValueStore {
   setItem(key: string, value: string): void;
 }
 
-function browserStore(): KeyValueStore | null {
+export function browserStore(): KeyValueStore | null {
   try {
     return window.localStorage;
   } catch {
@@ -99,8 +100,9 @@ export function toSession(s: StoredSession): Session | null {
   };
 }
 
-export function exportHistory(sessions: StoredSession[]): string {
-  return JSON.stringify({ app: 'ccat-prep', version: EXPORT_VERSION, exportedAt: new Date().toISOString(), sessions }, null, 2);
+/** `calibration` was added later in version 1; imports treat it as optional. */
+export function exportHistory(sessions: StoredSession[], calibration: CalibrationEntry[] = []): string {
+  return JSON.stringify({ app: 'ccat-prep', version: EXPORT_VERSION, exportedAt: new Date().toISOString(), sessions, calibration }, null, 2);
 }
 
 /** Merges an export into the current history (by id; existing sessions win). Throws on invalid files. */
