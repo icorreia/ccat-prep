@@ -772,3 +772,25 @@ button.sort {
   padding-left: 20px;
   font-size: 14px;
 }
+
+/* Strategy */
+
+.strategy li {
+  margin-bottom: 6px;
+}
+
+.strategy .table-scroll {
+  max-width: 320px;
+}
+
+.shortcuts div {
+  margin-bottom: 10px;
+}
+
+.shortcuts dt {
+  font-weight: 600;
+}
+
+.shortcuts dd {
+  margin: 2px 0 0;
+}

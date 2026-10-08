@@ -4,6 +4,7 @@ import { Gallery } from './screens/Gallery';
 import { Home } from './screens/Home';
 import { Practice } from './screens/Practice';
 import { Results } from './screens/Results';
+import { Strategy } from './screens/Strategy';
 import { PastReview, Review } from './screens/Review';
 import { TestRunner } from './screens/TestRunner';
 import { HistoryProvider } from './store/historyContext';
@@ -26,6 +27,7 @@ export function App() {
               <nav>
                 <NavLink to="/practice">Practice</NavLink>
                 <NavLink to="/history">History</NavLink>
+              <NavLink to="/strategy">Strategy</NavLink>
                 <NavLink to="/gallery">Question gallery</NavLink>
               </nav>
             </header>
@@ -33,6 +35,7 @@ export function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/gallery" element={<Gallery />} />
+              <Route path="/strategy" element={<Strategy />} />
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/test" element={<TestRunner />} />
                 <Route path="/results" element={<Results />} />
