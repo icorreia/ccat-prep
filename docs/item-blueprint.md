@@ -64,14 +64,17 @@ The anchors (reference questions) below are original items written in the style 
 | 4 | Pipe A fills a tank in 6 hours and pipe B in 3 hours. How long do they take together? | 2 hours (distractor: 4.5) |
 
 ### `percentage`
-- **Features:** percent kind (of / change / reverse / successive), whether the base is a round number, number of steps.
-- **Distractors:** dividing by the new value instead of the original, adding successive percentages instead of compounding them.
+- **Features:** percent kind (of / what percent / change / reverse / successive / "more than" vs "less than" / percentage points), whether the base is a round number, number of steps.
+- **Distractors:** dividing by the new value instead of the original, adding successive percentages instead of compounding them, dividing part and whole the wrong way round, giving the same percentage back after the base changed, percentage points instead of percent.
 
 | Level | Item | Answer |
 | --- | --- | --- |
 | 1 | What is 25% of 80? | 20 |
+| 2 | 20 is what percentage of 80? | 25% (distractor: 400%) |
 | 3 | A price rises from $60 to $75. What is the percentage increase? | 25% (distractor: 20%) |
 | 4 | A number is increased by 20% and then decreased by 20%. What is the net change? | −4% (distractor: 0%) |
+| 4 | A earns 25% more than B. By what percentage is B's salary lower than A's? | 20% (distractor: 25%) |
+| 4 | An interest rate rises from 4% to 5%. By what percentage did it increase? | 25% (distractor: 1%) |
 
 ### `ratio`: ratios and proportions
 - **Features:** direct or inverse proportion, whether ratios are chained, total size.
