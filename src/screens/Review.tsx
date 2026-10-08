@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router';
 import { toSession } from '../store/history';
 import { useHistory } from '../store/historyContext';
 import { QuestionView } from '../components/QuestionView';
+import { ReportQuestion } from '../components/ReportQuestion';
 import { isFinished, type Session } from '../engine/session';
 import { SLOW_MS } from '../engine/historyStats';
 import type { Attempt } from '../engine/types';
@@ -52,6 +53,7 @@ export function ReviewList({ session }: { session: Session }) {
             <span className="muted small">level {question.difficulty}</span>
           </div>
           <QuestionView question={question} selected={attempt?.choiceIndex ?? null} reveal />
+          <ReportQuestion question={question} />
         </div>
       ))}
     </>
