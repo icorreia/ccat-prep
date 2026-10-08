@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Rng } from '../../engine/rng';
-import { buildPuzzle, type Constraint, describe as describeConstraint, features, ordering, solve } from './ordering';
+import { askAbout, buildPuzzle, type Constraint, describe as describeConstraint, features, ordering, solve } from './ordering';
 
 describe('solve', () => {
   it('finds the unique arrangement for the blueprint anchors', () => {
@@ -65,5 +65,31 @@ describe('calibration against the blueprint anchors', () => {
     ])],
   ])('scores the level-%i anchor at its level', (level, p) => {
     expect(ordering.score({ ...features(p), valid: 1 })).toBe(level);
+  });
+});
+
+describe('notes on wrong names', () => {
+  // Ava, Ben, Cal, Dan, Eve finish in that order; the question asks who finished third (Cal).
+  const puzzle = {
+    names: ['Ava', 'Ben', 'Cal', 'Dan', 'Eve'],
+    setting: 'race' as const,
+    order: ['Ava', 'Ben', 'Cal', 'Dan', 'Eve'],
+    constraints: [
+      { kind: 'at', a: 'Cal', k: 2 },
+      { kind: 'immediately', a: 'Ava', b: 'Ben' },
+      { kind: 'immediately', a: 'Dan', b: 'Eve' },
+      { kind: 'at', a: 'Ava', k: 0 },
+    ] as Constraint[],
+  };
+  const { answer, notes } = askAbout(puzzle, 2);
+
+  it('says when only the statement that answers the question rules a name out', () => {
+    expect(answer).toBe('Cal');
+    expect(notes.get('Dan')).toBe('Ruled out directly: "Cal finished third." Dan finished fourth.');
+  });
+
+  it('otherwise says where the person actually is', () => {
+    expect(notes.get('Ava')).toBe('Actually, Ava finished first.');
+    expect(notes.has('Cal')).toBe(false);
   });
 });

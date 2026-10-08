@@ -1,4 +1,4 @@
-import { text } from '../../engine/question';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
 
@@ -151,16 +151,35 @@ export function features(p: Puzzle) {
 const PEOPLE = ['Ava', 'Ben', 'Cal', 'Dan', 'Eve', 'Finn', 'Gus', 'Hana', 'Ian', 'Jade', 'Kai', 'Lena', 'Max', 'Nora'];
 
 /** Who is at position k? Wrong choices: whoever would be there if one statement were missed. */
-function askAbout(p: Puzzle, k: number): { question: string; answer: string; distractors: string[] } {
+export function askAbout(p: Puzzle, k: number): { question: string; answer: string; distractors: string[]; notes: Map<string, string> } {
   const n = p.names.length;
   const answer = p.order[k]!;
   const counts = new Map<string, number>();
+  /** For each tempting name, a statement that, if overlooked, lets it fit. */
+  const missed = new Map<string, Constraint>();
+  const isDirect = (c: Constraint) => c.kind === 'at' && (c.k === k || p.order[c.k] === answer || c.a === answer);
   for (const c of p.constraints) {
     for (const sol of solve(p.names, p.constraints.filter((d) => d !== c))) {
       const name = sol[k]!;
-      if (name !== answer) counts.set(name, (counts.get(name) ?? 0) + 1);
+      if (name !== answer) {
+        counts.set(name, (counts.get(name) ?? 0) + 1);
+        // Prefer a statement that isn't the direct answer to "who is at k?": overlooking that one explains nothing.
+        if (!missed.has(name) || isDirect(missed.get(name)!)) missed.set(name, c);
+      }
     }
   }
+  const notes = new Map(
+    p.names
+      .filter((name) => name !== answer)
+      .map((name) => {
+        const c = missed.get(name);
+        const actual = `${name} ${place(p.setting, p.order.indexOf(name), n)}.`;
+        if (!c) return [name, `Actually, ${actual}`];
+        const statement = `"${describe(c, p.setting, n)}"`;
+        if (!isDirect(c)) return [name, `Only fits if you overlook ${statement} ${actual}`];
+        return [name, c.kind === 'at' && c.a === name ? `Ruled out directly: ${statement}` : `Ruled out directly: ${statement} ${actual}`];
+      }),
+  );
   const tempting = [...counts.entries()].sort((x, y) => y[1] - x[1]).map(([name]) => name);
   const distractors = [...new Set([...tempting, ...p.names.filter((x) => x !== answer)])];
   const question =
@@ -173,7 +192,14 @@ function askAbout(p: Puzzle, k: number): { question: string; answer: string; dis
           : k === 0
             ? 'Who is the tallest?'
             : `Who is the ${ORDINALS[k]} tallest?`;
-  return { question, answer, distractors };
+  return { question, answer, distractors, notes };
+}
+
+/** "finished third", "sits in seat 3", "is the tallest". */
+function place(setting: Setting, k: number, n: number): string {
+  if (setting === 'race') return `finished ${k === n - 1 ? 'last' : ORDINALS[k]}`;
+  if (setting === 'seats') return `sits in seat ${k + 1}`;
+  return k === 0 ? 'is the tallest' : k === n - 1 ? 'is the shortest' : `is the ${ORDINALS[k]} tallest`;
 }
 
 const INTRO: Record<Setting, (n: number) => string> = {
@@ -194,13 +220,13 @@ export const ordering: Generator = {
     const puzzle = buildPuzzle(rng, rng.sample(PEOPLE, n), setting);
     if (!puzzle) return { prompt: '', answer: text(''), distractors: [], explanation: '', features: { valid: 0 } };
     const k = rng.int(0, n - 1);
-    const { question, answer, distractors } = askAbout(puzzle, k);
+    const { question, answer, distractors, notes } = askAbout(puzzle, k);
     const statements = puzzle.constraints.map((c) => describe(c, setting, n)).join('\n');
     const orderText = setting === 'seats' ? `seats 1–${n}: ${puzzle.order.join(', ')}` : `from ${setting === 'height' ? 'tallest' : 'first'} to ${setting === 'height' ? 'shortest' : 'last'}: ${puzzle.order.join(', ')}`;
     return {
       prompt: `${INTRO[setting](n)}\n\n${statements}\n\n${question}`,
       answer: text(answer),
-      distractors: distractors.map((d) => text(d)),
+      distractors: distractors.map((d) => because(text(d), notes.get(d)!)),
       explanation: `The only arrangement that fits every statement is (${orderText}). So the answer is ${answer}.`,
       features: { ...features(puzzle), valid: 1 },
       choiceCount: Math.min(5, n),
