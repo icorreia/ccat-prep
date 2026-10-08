@@ -1,3 +1,4 @@
+import { scoreSession } from './scoring';
 import type { Attempt } from './types';
 
 /** The minimum a stats function needs from a stored session. */
@@ -110,4 +111,59 @@ export function slowQuestions(sessions: SessionLike[], last = 5): SlowSummary {
   for (const a of recent.flatMap((s) => s.attempts)) if (a.timeMs > SLOW_MS) counts.set(a.type, (counts.get(a.type) ?? 0) + 1);
   const types = [...counts.entries()].map(([type, count]) => ({ type, count })).sort((a, b) => b.count - a.count);
   return { sessions: recent.length, slow: types.reduce((sum, t) => sum + t.count, 0), types };
+}
+
+/** Answers compared on each side of a type's accuracy trend. */
+export const TREND_WINDOW = 10;
+
+export interface TypeStat {
+  type: string;
+  /** Questions shown, answered or not. */
+  attempts: number;
+  answered: number;
+  /** correct / answered, or null before any answer. */
+  accuracy: number | null;
+  medianCorrectMs: number | null;
+  /** Accuracy of the last TREND_WINDOW answers minus the TREND_WINDOW before them; null until there are enough. */
+  trend: number | null;
+}
+
+const accuracyOf = (answers: Attempt[]) => answers.filter((a) => a.correct).length / answers.length;
+
+/** Per question type, over every session given (drills and speed sessions included). */
+export function typeStats(sessions: SessionLike[]): TypeStat[] {
+  const attempts = [...sessions].sort((a, b) => a.startedAt - b.startedAt).flatMap((s) => s.attempts);
+  const byType = scoreSession(0, attempts).byType;
+  return Object.entries(byType).map(([type, t]) => {
+    const answers = attempts.filter((a) => a.type === type && a.choiceIndex !== null);
+    const recent = answers.slice(-TREND_WINDOW);
+    const previous = answers.slice(-2 * TREND_WINDOW, -TREND_WINDOW);
+    return {
+      type,
+      attempts: t.seen,
+      answered: t.answered,
+      accuracy: t.answered ? t.accuracy : null,
+      medianCorrectMs: t.medianCorrectMs,
+      trend: previous.length === TREND_WINDOW ? accuracyOf(recent) - accuracyOf(previous) : null,
+    };
+  });
+}
+
+/** Types with at least this many answers can be called weak; fewer is noise. */
+export const MIN_ANSWERS_FOR_WEAK = 5;
+
+/** The `count` types with the lowest accuracy among those with enough answers. */
+export function weakestTypes(stats: TypeStat[], count = 3): Set<string> {
+  return new Set(
+    stats
+      .filter((t) => t.answered >= MIN_ANSWERS_FOR_WEAK)
+      .sort((a, b) => a.accuracy! - b.accuracy!)
+      .slice(0, count)
+      .map((t) => t.type),
+  );
+}
+
+/** Average of the last 5 full tests started before `time`, or null if there were none. */
+export function recentAverageAt(sessions: SessionLike[], time: number): number | null {
+  return summarize(sessions.filter((s) => s.startedAt <= time)).recentAvg;
 }

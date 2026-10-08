@@ -29,7 +29,7 @@ export interface KeyValueStore {
   setItem(key: string, value: string): void;
 }
 
-function browserStore(): KeyValueStore | null {
+export function browserStore(): KeyValueStore | null {
   try {
     return window.localStorage;
   } catch {

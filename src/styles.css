@@ -688,3 +688,56 @@ table.stats .num {
   font-size: 14px;
   margin: 8px 0 0;
 }
+
+/* History: question types, filters, calibration */
+
+input[type='number'],
+input[type='date'] {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+}
+
+.score-input {
+  width: 5em;
+}
+
+a.button {
+  display: inline-block;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.filters {
+  margin-bottom: 16px;
+}
+
+button.sort {
+  border: none;
+  background: none;
+  padding: 0;
+  font-weight: inherit;
+  text-align: inherit;
+}
+
+.type-table .over {
+  font-weight: 700;
+}
+
+.badge.weak {
+  color: var(--wrong);
+  margin-left: 8px;
+}
+
+.calibration {
+  padding-left: 20px;
+  font-size: 14px;
+}
