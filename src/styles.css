@@ -588,3 +588,67 @@ table.stats .num {
   color: var(--wrong);
   font-size: 14px;
 }
+
+/* Charts (series colours from the validated reference palette) */
+
+:root {
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+  }
+}
+
+:root[data-theme='dark'] {
+  --series-1: #3987e5;
+  --series-2: #d95926;
+}
+
+.chart {
+  margin: 0 0 8px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+.swatch.series-1 {
+  background: var(--series-1);
+}
+
+.swatch.series-2 {
+  background: var(--series-2);
+}
+
+.swatch.reference {
+  height: 0;
+  border-top: 2px dashed var(--muted);
+  border-radius: 0;
+}
+
+.chart-tooltip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+}
