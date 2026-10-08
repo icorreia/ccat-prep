@@ -1,5 +1,5 @@
-import { numericDistractors } from '../../engine/distractors';
-import { text } from '../../engine/question';
+import { numericChoices } from '../../engine/distractors';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Choice, DataTable, Difficulty, Draft, Generator } from '../../engine/types';
 import { percent } from './format';
@@ -47,13 +47,20 @@ const labelsOf = (table: DataTable) => table.rows.map((r) => r.label);
 export function lookup(table: DataTable, row: number, subject: Subject, rng: Rng): Problem {
   const values = table.rows.map((r) => r.values[0]!);
   const answer = values[row]!;
-  const neighbours = [values[row - 1], values[row + 1]].filter((v): v is number => v !== undefined);
+  // Neighbouring rows first: reading the wrong row is the slip this question tests.
+  const order = [row - 1, row + 1, ...values.keys()].filter((i) => i >= 0 && i < values.length && i !== row);
   return {
     kind: 'lookup',
     table,
     prompt: `How many ${subject.amount} were ${subject.verb} in ${MONTHS[row]}?`,
     answer: text(answer),
-    distractors: numericDistractors(answer, [...neighbours, ...values], 4, rng, { step: 10 }).map(text),
+    distractors: numericChoices(
+      answer,
+      order.map((i) => ({ value: values[i]!, why: `That's the ${MONTHS[i]} figure. Read across the ${MONTHS[row]} row.` })),
+      4,
+      rng,
+      { step: 10 },
+    ),
     explanation: `Read the ${MONTHS[row]} row: ${answer}.`,
     cells: 1,
     valid: new Set(values).size === values.length,
@@ -71,7 +78,11 @@ export function extreme(table: DataTable, most: boolean, subject: Subject): Prob
     prompt: `In which month were the ${most ? 'most' : 'fewest'} ${subject.unit} ${subject.verb}?`,
     answer: text(labels[best]!),
     // Runner-up first: it's the one a quick glance confuses with the answer.
-    distractors: order.slice(1).map(([, i]) => text(labels[i]!)),
+    distractors: order.slice(1).map(([v, i], k) =>
+      k === 0
+        ? because(text(labels[i]!), `The runner-up, with ${v} against ${values[best]}. Compare the close ones carefully.`)
+        : text(labels[i]!),
+    ),
     explanation: `${labels[best]} has ${values[best]}, the ${most ? 'highest' : 'lowest'} value; next is ${labels[order[1]![1]]} with ${order[1]![0]}.`,
     cells: values.length,
     valid: order[0]![0] !== order[1]![0],
@@ -86,7 +97,17 @@ export function difference(table: DataTable, a: number, b: number, subject: Subj
     table,
     prompt: `How many more ${subject.amount} were ${subject.verb} in ${MONTHS[a]} than in ${MONTHS[b]}?`,
     answer: text(answer),
-    distractors: numericDistractors(answer, [va + vb, va, vb], 4, rng, { step: 10 }).map(text),
+    distractors: numericChoices(
+      answer,
+      [
+        { value: va + vb, why: 'Added the two months instead of subtracting.' },
+        { value: va, why: `That's ${MONTHS[a]} alone. Subtract ${MONTHS[b]} (${vb}).` },
+        { value: vb, why: `That's ${MONTHS[b]} alone. The question asks for the difference.` },
+      ],
+      4,
+      rng,
+      { step: 10 },
+    ),
     explanation: `${MONTHS[a]}: ${va}. ${MONTHS[b]}: ${vb}. ${va} − ${vb} = ${answer}.`,
     cells: 2,
     valid: answer > 0,
@@ -103,8 +124,16 @@ export function percentChange(table: DataTable, from: number, to: number, subjec
     prompt: `By what percentage did the number of ${subject.unit} ${subject.verb} increase from ${MONTHS[from]} to ${MONTHS[to]}?`,
     answer: text(percent(answer)),
     distractors: valid
-      ? numericDistractors(answer, [((vt - vf) / vt) * 100, vt - vf, answer / 2], 4, rng, { step: 5 }).map((v) =>
-          text(percent(v)),
+      ? numericChoices(
+          answer,
+          [
+            { value: ((vt - vf) / vt) * 100, why: `Divided by the later value (${vt}). Percentage change is measured from the starting value (${vf}).` },
+            { value: vt - vf, why: `That's the increase as a count (${vt - vf}), not a percentage.` },
+            answer / 2,
+          ],
+          4,
+          rng,
+          { step: 5, format: percent },
         )
       : [],
     explanation: `${vt} − ${vf} = ${vt - vf}. Divided by the starting value: ${vt - vf} ÷ ${vf} = ${answer}%.`,
@@ -127,7 +156,18 @@ export function combinedGrowth(table: DataTable, from: number, to: number, rng: 
     answer: text(answer),
     distractors:
       answer > 0
-        ? numericDistractors(answer, [growthA, growthB, tt, Math.abs(growthA - growthB)], 4, rng, { step: 10 }).map(text)
+        ? numericChoices(
+            answer,
+            [
+              { value: growthA, why: `That's the growth in ${a} only. Add the growth in ${b} too.` },
+              { value: growthB, why: `That's the growth in ${b} only. Add the growth in ${a} too.` },
+              { value: tt, why: `That's the ${MONTHS[to]} total, not the growth since ${MONTHS[from]}.` },
+              { value: Math.abs(growthA - growthB), why: 'Subtracted one growth from the other; the combined growth adds them.' },
+            ],
+            4,
+            rng,
+            { step: 10 },
+          )
         : [],
     explanation: `${MONTHS[from]}: ${table.rows[from]!.values.join(' + ')} = ${tf}. ${MONTHS[to]}: ${table.rows[to]!.values.join(' + ')} = ${tt}. Growth: ${tt} − ${tf} = ${answer}.`,
     cells: 4,
@@ -151,7 +191,13 @@ export function largestRise(table: DataTable): Problem {
     table,
     prompt: 'Between which two consecutive months was the percentage increase the largest?',
     answer: text(best.label),
-    distractors: [byRise[0]!, ...byPct.slice(1)].filter((s) => s !== best).map((s) => text(s.label)),
+    distractors: [
+      because(
+        text(byRise[0]!.label),
+        `The biggest rise in absolute terms (+${byRise[0]!.rise}), but from a higher starting value, so only ${Math.round(byRise[0]!.pct)}% in percentage terms.`,
+      ),
+      ...byPct.slice(1).map((s) => text(s.label)),
+    ].filter((c) => c.text !== best.label),
     explanation: `Percentage changes: ${steps.map((s) => `${s.label} ${s.pct >= 0 ? '+' : ''}${Math.round(s.pct)}%`).join(', ')}. The largest is ${best.label}${byRise[0] !== best ? `, even though ${byRise[0]!.label} has the biggest rise in absolute terms (${byRise[0]!.rise})` : ''}.`,
     cells: values.length,
     // Needs a clear winner, and the absolute-rise trap must point elsewhere.

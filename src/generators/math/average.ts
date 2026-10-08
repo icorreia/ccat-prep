@@ -1,4 +1,4 @@
-import { numericDistractors } from '../../engine/distractors';
+import { numericChoices, type Mistake } from '../../engine/distractors';
 import { text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
@@ -14,7 +14,7 @@ interface Problem {
   kind: Kind;
   prompt: string;
   answer: number;
-  mistakes: number[];
+  mistakes: Mistake[];
   explanation: string;
   count: number;
   /** Largest intermediate total the solver has to hold in their head. */
@@ -43,7 +43,11 @@ export function mean(values: number[]): Problem {
     kind: 'mean',
     prompt: `What is the average of ${list(values)}?`,
     answer,
-    mistakes: [total, answer + 1, Math.round(total / (values.length - 1))],
+    mistakes: [
+      { value: total, why: `That's the total. Divide it by how many numbers there are (${values.length}).` },
+      answer + 1,
+      { value: Math.round(total / (values.length - 1)), why: `Divided by ${values.length - 1} instead of ${values.length}: count the numbers again.` },
+    ],
     explanation: `${values.join(' + ')} = ${total}, and ${total} ÷ ${values.length} = ${answer}.`,
     count: values.length,
     total,
@@ -61,7 +65,11 @@ export function missing(known: number[], avg: number): Problem {
     kind: 'missing',
     prompt: `A group of ${n} numbers has an average of ${avg}. ${COUNT_WORDS[known.length]} of the numbers are ${list(known)}. What is the remaining number?`,
     answer,
-    mistakes: [avg, answer + n, Math.round(sum(known) / known.length)],
+    mistakes: [
+      { value: avg, why: "That's the average itself, not the missing number." },
+      answer + n,
+      { value: Math.round(sum(known) / known.length), why: "That's the average of the known numbers. Find the total (count × average) and subtract their sum." },
+    ],
     explanation: `The ${n} numbers add up to ${n} × ${avg} = ${total}. ${total} − ${sum(known)} = ${answer}.`,
     count: n,
     total,
@@ -78,7 +86,11 @@ export function target(n: number, oldAvg: number, newAvg: number): Problem {
     kind: 'target',
     prompt: `The average of ${n} test scores is ${oldAvg}. What score is needed on the next test to raise the average to ${newAvg}?`,
     answer,
-    mistakes: [newAvg + (newAvg - oldAvg), newAvg, answer - (n + 1)],
+    mistakes: [
+      { value: newAvg + (newAvg - oldAvg), why: `Allowed for the rise of ${newAvg - oldAvg} only once. The new score must also lift each of the ${n} earlier scores by ${newAvg - oldAvg}.` },
+      { value: newAvg, why: "That's the target average. The new score has to be higher to pull the others up." },
+      answer - (n + 1),
+    ],
     explanation: `${n + 1} scores averaging ${newAvg} total ${total}. The first ${n} total ${n} × ${oldAvg} = ${n * oldAvg}, so the next score is ${total} − ${n * oldAvg} = ${answer}.`,
     count: n + 1,
     total,
@@ -95,7 +107,11 @@ export function remove(n: number, avg: number, newAvg: number): Problem {
     kind: 'remove',
     prompt: `${n} numbers have an average of ${avg}. When one number is removed, the average of the rest is ${newAvg}. What number was removed?`,
     answer,
-    mistakes: [Math.abs(avg - newAvg), avg + (avg - newAvg), answer + 2],
+    mistakes: [
+      { value: Math.abs(avg - newAvg), why: "That's how much the average changed, not the number removed." },
+      { value: avg + (avg - newAvg), why: `Counted the change in average only once. It applies to each of the ${n - 1} numbers left.` },
+      answer + 2,
+    ],
     explanation: `Before: ${n} × ${avg} = ${total}. After: ${n - 1} × ${newAvg} = ${(n - 1) * newAvg}. The removed number is ${total} − ${(n - 1) * newAvg} = ${answer}.`,
     count: n,
     total,
@@ -112,7 +128,11 @@ export function combined(n1: number, a1: number, n2: number, a2: number): Proble
     kind: 'combined',
     prompt: `A group of ${n1} people averaged ${a1} points, and another group of ${n2} people averaged ${a2} points. What is the average across all ${n1 + n2} people?`,
     answer,
-    mistakes: [(a1 + a2) / 2, answer + 1, answer - 1],
+    mistakes: [
+      { value: (a1 + a2) / 2, why: `Averaged ${a1} and ${a2} directly, ignoring that the groups have different sizes (${n1} and ${n2}).` },
+      answer + 1,
+      answer - 1,
+    ],
     explanation: `Total points: ${n1} × ${a1} + ${n2} × ${a2} = ${total}. ${total} ÷ ${n1 + n2} = ${answer}. (Averaging ${a1} and ${a2} directly gives ${(a1 + a2) / 2}, which ignores the group sizes.)`,
     count: n1 + n2,
     total,
@@ -167,7 +187,7 @@ export const average: Generator = {
       prompt: p.prompt,
       answer: text(p.answer),
       // Fractional answers are rejected by score(), so don't build distractors for them.
-      distractors: whole ? numericDistractors(p.answer, p.mistakes, 4, rng).map(text) : [],
+      distractors: whole ? numericChoices(p.answer, p.mistakes, 4, rng) : [],
       explanation: p.explanation,
       features: {
         kind: KINDS[p.kind],

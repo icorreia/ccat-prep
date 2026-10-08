@@ -1,5 +1,5 @@
-import { numericDistractors } from '../../engine/distractors';
-import { text } from '../../engine/question';
+import { numericChoices } from '../../engine/distractors';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Choice, Difficulty, Draft, Generator } from '../../engine/types';
 import { fraction, gcd, lcm } from './format';
@@ -38,7 +38,16 @@ export function of([a, b]: Frac, n: number, rng: Rng): Problem {
     prompt: `What is ${a}/${b} of ${n}?`,
     answer: text(answer),
     distractors: valid
-      ? numericDistractors(answer, [n / b, n - answer, (b * n) / a], 4, rng).map(text)
+      ? numericChoices(
+          answer,
+          [
+            { value: n / b, why: `That's 1/${b} of ${n}. Multiply by ${a} as well.` },
+            { value: n - answer, why: `That's the part left over (${n} − ${answer}).` },
+            { value: (b * n) / a, why: `Divided by ${a}/${b} instead of multiplying.` },
+          ],
+          4,
+          rng,
+        )
       : [],
     explanation: `${n} ÷ ${b} = ${n / b}, and ${n / b} × ${a} = ${answer}.`,
     harder: a !== 1 || n > 50,
@@ -59,7 +68,14 @@ export function compare(fracs: Frac[], largest: boolean): Problem {
     prompt: `Which of these fractions is the ${largest ? 'largest' : 'smallest'}?`,
     answer: text(show(best)),
     // The fraction with the biggest numerator is the classic trap, so it goes first.
-    distractors: [byNumerator, runnerUp, ...fracs].filter((f) => f !== best).map((f) => text(show(f))),
+    distractors: [
+      because(
+        text(show(byNumerator)),
+        `Has the ${largest ? 'biggest' : 'smallest'} numerator, but the denominators differ: compare the values, not the numerators.`,
+      ),
+      because(text(show(runnerUp)), `Close, but slightly ${largest ? 'smaller' : 'larger'}. Compare as decimals or by cross-multiplying.`),
+      ...fracs.map((f) => text(show(f))),
+    ].filter((c) => c.text !== show(best)),
     explanation: `Convert to decimals: ${fracs.map((f) => `${show(f)} ≈ ${value(f).toFixed(3)}`).join(', ')}. The ${largest ? 'largest' : 'smallest'} is ${show(best)}.`,
     harder: Math.abs(value(best) - value(runnerUp)) < CLOSE_GAP,
     valid: values.size === fracs.length && reduced && Math.abs(value(best) - value(runnerUp)) <= MAX_GAP,
@@ -80,7 +96,16 @@ export function remainder(f1: Frac, f2: Frac, total: number, rng: Rng): Problem 
     prompt: `A tank is full. First ${show(f1)} of the water is used, then another ${show(f2)} of the full tank. ${left} litres remain. How many litres does the tank hold?`,
     answer: text(total),
     distractors: valid
-      ? numericDistractors(total, [Math.round(left / used), left * 2, Math.round(left / (1 - value(f1)))], 4, rng).map(text)
+      ? numericChoices(
+          total,
+          [
+            { value: Math.round(left / used), why: `Divided the ${left} L by the fraction used (${show(usedFrac)}) instead of the fraction left (${show(leftFrac)}).` },
+            { value: left * 2, why: 'Doubled what remains, as if exactly half the tank were left.' },
+            { value: Math.round(left / (1 - value(f1))), why: `Only allowed for the first ${show(f1)}; the second ${show(f2)} was used too.` },
+          ],
+          4,
+          rng,
+        )
       : [],
     explanation: `Used: ${show(f1)} + ${show(f2)} = ${show(usedFrac)}, so ${show(leftFrac)} remains. ${show(leftFrac)} of the tank is ${left} L, so the tank holds ${left} ÷ ${show(leftFrac)} = ${total} L.`,
     harder: false,
@@ -100,12 +125,19 @@ export function remainderOfRest(f1: Frac, f2: Frac, total: number, rng: Rng): Pr
     prompt: `A tank is full. First ${show(f1)} of the water is used, then ${show(f2)} of what is left. ${left} litres remain. How many litres does the tank hold?`,
     answer: text(total),
     distractors: valid
-      ? numericDistractors(
+      ? numericChoices(
           total,
-          [naiveLeftShare > 0 ? Math.round(left / naiveLeftShare) : -1, afterFirst, left * 2],
+          [
+            {
+              value: naiveLeftShare > 0 ? Math.round(left / naiveLeftShare) : -1,
+              why: `Treated ${show(f2)} as a fraction of the full tank. It's ${show(f2)} of what was left after the first step.`,
+            },
+            { value: afterFirst, why: `That's how much was left after the first step only (${afterFirst} L).` },
+            { value: left * 2, why: 'Doubled what remains, as if exactly half the tank were left.' },
+          ],
           4,
           rng,
-        ).map(text)
+        )
       : [],
     explanation: `Using ${show(f1)} leaves ${show([f1[1] - f1[0], f1[1]])} of the tank (${afterFirst} L). Using ${show(f2)} of that leaves ${show([f2[1] - f2[0], f2[1]])} of it (${left} L). Working backwards: ${left} ÷ ${show([f2[1] - f2[0], f2[1]])} = ${afterFirst}, then ${afterFirst} ÷ ${show([f1[1] - f1[0], f1[1]])} = ${total} L.`,
     harder: false,

@@ -19,7 +19,7 @@ describe('average problems', () => {
   });
 
   it('offers the "average of averages" trap for combined groups', () => {
-    expect(combined(2, 40, 3, 60).mistakes).toContain(50);
+    expect(combined(2, 40, 3, 60).mistakes).toContainEqual(expect.objectContaining({ value: 50, why: expect.stringContaining('different sizes') }));
   });
 });
 

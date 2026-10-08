@@ -1,5 +1,5 @@
-import { numericDistractors } from '../../engine/distractors';
-import { text } from '../../engine/question';
+import { numericChoices } from '../../engine/distractors';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Choice, Difficulty, Draft, Generator } from '../../engine/types';
 import { money, percent } from './format';
@@ -33,7 +33,17 @@ export function of(p: number, n: number, rng: Rng): Problem {
     prompt: `What is ${p}% of ${n}?`,
     answer: text(answer),
     distractors: valid
-      ? numericDistractors(answer, [n - answer, answer * 2, (p * n) / 10, p], 4, rng).map(text)
+      ? numericChoices(
+          answer,
+          [
+            { value: n - answer, why: `That's the other ${100 - p}% (${n} − ${answer}).` },
+            answer * 2,
+            { value: (p * n) / 10, why: 'Divided by 10 instead of 100: a decimal-point slip.' },
+            { value: p, why: `That's just the percentage itself, not ${p}% of ${n}.` },
+          ],
+          4,
+          rng,
+        )
       : [],
     explanation: `${p}% of ${n} = ${p}/100 × ${n} = ${answer}.`,
     friendly: isFriendly(p),
@@ -54,8 +64,17 @@ export function change(from: number, to: number, rng: Rng): Problem {
     prompt: `A price ${to > from ? 'rises' : 'falls'} from ${money(from)} to ${money(to)}. What is the percentage ${direction}?`,
     answer: text(percent(answer)),
     distractors: valid
-      ? numericDistractors(answer, [wrongBase, diff, answer + 5, answer - 5], 4, rng, { step: 5 }).map((v) =>
-          text(percent(v)),
+      ? numericChoices(
+          answer,
+          [
+            { value: wrongBase, why: `Divided the change by the new price (${money(to)}). Percentage change is measured against the original, ${money(from)}.` },
+            { value: diff, why: `That's the change in dollars (${money(diff)}), not as a percentage.` },
+            answer + 5,
+            answer - 5,
+          ],
+          4,
+          rng,
+          { step: 5, format: percent },
         )
       : [],
     explanation: `The change is ${money(diff)}. Divide by the original price: ${diff} ÷ ${from} = ${answer}%. (Dividing by the new price, ${to}, is the common mistake.)`,
@@ -77,7 +96,23 @@ export function reverse(p: number, after: number, rng: Rng): Problem {
     prompt: `After ${label}, an item costs ${money(after)}. What was the price before?`,
     answer: text(money(answer)),
     distractors: valid
-      ? numericDistractors(answer, [forward, after - p, after + Math.abs(p)], 4, rng).map((v) => text(money(v)))
+      ? numericChoices(
+          answer,
+          [
+            {
+              value: forward,
+              why:
+                p < 0
+                  ? `Added ${-p}% to ${money(after)}. The discount was taken from the old price, so divide by ${factor / 100} instead.`
+                  : `Took ${p}% off ${money(after)}. The increase was added to the old price, so divide by ${factor / 100} instead.`,
+            },
+            { value: after - p, why: `Treated ${Math.abs(p)}% as ${money(Math.abs(p))}.` },
+            { value: after + Math.abs(p), why: `Treated ${Math.abs(p)}% as ${money(Math.abs(p))}.` },
+          ],
+          4,
+          rng,
+          { format: money },
+        )
       : [],
     explanation:
       `The new price is ${factor}% of the old one, so the old price is ${after} ÷ ${factor / 100} = ${money(answer)}.` +
@@ -99,10 +134,14 @@ export function successive(changes: number[]): Problem {
   const naive = changes.reduce((a, b) => a + b, 0);
   const valid = Number.isInteger(answer);
   const steps = changes.map((c) => `${c > 0 ? 'increased' : 'decreased'} by ${Math.abs(c)}%`);
+  const notes = new Map([
+    [naive, "Added the percentages. Each change applies to the price after the previous one, so they don't simply add up."],
+    [-answer, 'Right size, wrong direction.'],
+  ]);
   const candidates = [naive, -answer, answer + 2, answer - 2, answer + 5, answer - 5, answer + 10];
   const distractors = [...new Set(candidates.filter((v) => v !== answer && Number.isInteger(v)))]
     .slice(0, 4)
-    .map((v) => text(signed(v)));
+    .map((v) => (notes.has(v) ? because(text(signed(v)), notes.get(v)!) : text(signed(v))));
   return {
     kind: 'successive',
     prompt: `A price is ${steps.slice(0, -1).join(', then ')} and then ${steps.at(-1)}. What is the overall change?`,

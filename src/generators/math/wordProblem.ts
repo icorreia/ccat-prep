@@ -1,4 +1,4 @@
-import { numericDistractors } from '../../engine/distractors';
+import { numericChoices, type Mistake } from '../../engine/distractors';
 import { text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Choice, Difficulty, Draft, Generator } from '../../engine/types';
@@ -20,8 +20,8 @@ interface Problem {
   valid: boolean;
 }
 
-const nums = (answer: number, mistakes: number[], rng: Rng, format: (n: number) => string = String) =>
-  numericDistractors(answer, mistakes, 4, rng).map((v) => text(format(v)));
+const nums = (answer: number, mistakes: Mistake[], rng: Rng, format: (n: number) => string = String) =>
+  numericChoices(answer, mistakes, 4, rng, { format });
 
 /** Direct proportion: `n1` units take/cost `v1`; what about `n2`? */
 export function scale(n1: number, v1: number, n2: number, setting: 'drive' | 'buy', rng: Rng): Problem {
@@ -37,7 +37,18 @@ export function scale(n1: number, v1: number, n2: number, setting: 'drive' | 'bu
     kind: 'scale',
     prompt,
     answer: text(format(answer)),
-    distractors: valid ? nums(answer, [v1 + n2, v1 * n2, answer - unit], rng, format) : [],
+    distractors: valid
+      ? nums(
+          answer,
+          [
+            { value: v1 + n2, why: `Added ${n2} to ${v1}. Find the rate for one ${setting === 'drive' ? 'hour' : 'ticket'} (${v1} ÷ ${n1}) and multiply.` },
+            { value: v1 * n2, why: `Multiplied ${v1} by ${n2} without first dividing by ${n1} to get the rate for one ${setting === 'drive' ? 'hour' : 'ticket'}.` },
+            { value: answer - unit, why: `That's ${n2 - 1} ${setting === 'drive' ? 'hours' : 'tickets'}' worth, not ${n2}: an off-by-one.` },
+          ],
+          rng,
+          format,
+        )
+      : [],
     explanation: `One ${setting === 'drive' ? 'hour' : 'ticket'}: ${v1} ÷ ${n1} = ${unit}. ${n2} × ${unit} = ${format(answer)}.`,
     valid,
   };
@@ -52,7 +63,15 @@ export function meeting(distance: number, s1: number, s2: number, rng: Rng): Pro
     prompt: `Two trains are ${distance} km apart and travel toward each other at ${s1} km/h and ${s2} km/h. After how many hours do they meet?`,
     answer: text(answer),
     distractors: valid
-      ? nums(answer, [distance / s1, distance / s2, distance / Math.abs(s1 - s2)], rng)
+      ? nums(
+          answer,
+          [
+            { value: distance / s1, why: `Used only the first train's speed. Together they close the gap at ${s1} + ${s2} = ${s1 + s2} km/h.` },
+            { value: distance / s2, why: `Used only the second train's speed. Together they close the gap at ${s1} + ${s2} = ${s1 + s2} km/h.` },
+            { value: distance / Math.abs(s1 - s2), why: 'Subtracted the speeds. Trains moving toward each other add their speeds.' },
+          ],
+          rng,
+        )
       : [],
     explanation: `They close the gap at ${s1} + ${s2} = ${s1 + s2} km/h. ${distance} ÷ ${s1 + s2} = ${answer} hours.`,
     valid,
@@ -67,7 +86,18 @@ export function combinedWork(a: number, b: number, rng: Rng): Problem {
     kind: 'combinedWork',
     prompt: `Pipe A fills a tank in ${a} hours and pipe B fills it in ${b} hours. How many hours do they take together?`,
     answer: text(answer),
-    distractors: valid ? nums(answer, [(a + b) / 2, Math.abs(a - b), a + b, Math.min(a, b)], rng) : [],
+    distractors: valid
+      ? nums(
+          answer,
+          [
+            { value: (a + b) / 2, why: `Averaged the two times. Add the rates instead: 1/${a} + 1/${b} of the tank per hour.` },
+            { value: Math.abs(a - b), why: `Subtracted the times. Add the rates instead: 1/${a} + 1/${b} of the tank per hour.` },
+            { value: a + b, why: `Added the times. Two pipes together are faster than either alone, so the answer is under ${Math.min(a, b)} hours.` },
+            { value: Math.min(a, b), why: `That's pipe ${a < b ? 'A' : 'B'} on its own. With both pipes running it's faster.` },
+          ],
+          rng,
+        )
+      : [],
     explanation: `Per hour, A fills 1/${a} and B fills 1/${b} of the tank: together ${a + b}/${a * b} = 1/${answer}. So it takes ${answer} hours. (Averaging the times, ${(a + b) / 2}, is the trap.)`,
     valid,
   };
@@ -82,7 +112,17 @@ export function roundTrip(distance: number, s1: number, s2: number, rng: Rng): P
     kind: 'roundTrip',
     prompt: `A driver goes ${distance} km to a city at ${s1} km/h and returns the same way at ${s2} km/h. What is the average speed for the whole trip, in km/h?`,
     answer: text(answer),
-    distractors: valid ? nums(answer, [(s1 + s2) / 2, Math.max(s1, s2) - 5, answer + 2], rng) : [],
+    distractors: valid
+      ? nums(
+          answer,
+          [
+            { value: (s1 + s2) / 2, why: `Averaged the two speeds. The slower leg takes longer, so divide the total distance (${2 * distance} km) by the total time.` },
+            Math.max(s1, s2) - 5,
+            answer + 2,
+          ],
+          rng,
+        )
+      : [],
     explanation: `Time: ${distance} ÷ ${s1} + ${distance} ÷ ${s2} = ${distance / s1} + ${distance / s2} = ${time} hours for ${2 * distance} km. ${2 * distance} ÷ ${time} = ${answer} km/h. (The plain average of the speeds, ${(s1 + s2) / 2}, ignores that the slower leg takes longer.)`,
     valid,
   };
@@ -98,7 +138,18 @@ export function ages(k: number, m: number, n: number, names: [string, string], r
     kind: 'ages',
     prompt: `${names[0]} is ${times(k)} as old as ${names[1]}. In ${n} years, ${names[0]} will be ${times(m)} as old as ${names[1]}. How old is ${names[1]} now?`,
     answer: text(b),
-    distractors: valid ? nums(b, [a, b + n, n, a - b], rng) : [],
+    distractors: valid
+      ? nums(
+          b,
+          [
+            { value: a, why: `That's ${names[0]}'s age now. The question asks for ${names[1]}.` },
+            { value: b + n, why: `That's ${names[1]}'s age in ${n} years, not now.` },
+            n,
+            { value: a - b, why: `That's the difference in their ages.` },
+          ],
+          rng,
+        )
+      : [],
     explanation: `Let ${names[1]} be x, so ${names[0]} is ${k}x. Then ${k}x + ${n} = ${m}(x + ${n}), so ${k - m === 1 ? `x = ${b}` : `${k - m}x = ${(m - 1) * n} and x = ${b}`}. Check: ${a} + ${n} = ${a + n} = ${m} × ${b + n}.`,
     valid,
   };

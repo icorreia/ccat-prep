@@ -32,7 +32,7 @@ describe('series builders', () => {
 
   it('includes the "repeat the last gap" trap for second-order series', () => {
     // 3, 4, 8, 17, 33 → 58; repeating the last gap (16) gives 49.
-    expect(secondOrder(3, 1, 'squares', 5).mistakes).toContain(49);
+    expect(secondOrder(3, 1, 'squares', 5).mistakes).toContainEqual(expect.objectContaining({ value: 49 }));
   });
 });
 
@@ -43,5 +43,14 @@ describe('calibration against the blueprint anchors', () => {
     [4, secondOrder(3, 1, 'squares', 5)], // 3, 4, 8, 17, 33, ?
   ])('scores the level-%i anchor at its level', (level, series) => {
     expect(numberSeries.score(features(series))).toBe(level);
+  });
+});
+
+describe('alternating series trap', () => {
+  it('offers repeating the last operation, which differs from the answer', () => {
+    // 2, 6, 3, 9, 6, ? alternates ×3 and −3: the answer is 18; repeating −3 gives 3.
+    const s = alternating(2, [{ kind: '×', n: 3 }, { kind: '-', n: 3 }], 5);
+    expect(s.terms.at(-1)).toBe(18);
+    expect(s.mistakes[0]).toEqual(expect.objectContaining({ value: 3 }));
   });
 });
