@@ -22,6 +22,7 @@ npm run dev        # http://localhost:5173
 | `npm run typecheck` | Type-check only (TypeScript 7)       |
 | `npm run lint`      | ESLint                               |
 | `npm test`          | Run the Vitest suite once            |
+| `npm run samples`   | Regenerate `samples/<type>.md` (add `-- <type>` for one) |
 
 CI runs lint, typecheck, tests and build on every PR.
 
