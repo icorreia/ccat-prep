@@ -58,6 +58,38 @@ export function interleave<T>(items: T[], key: (t: T) => string): T[] {
 export const fingerprint = (q: Question) =>
   q.itemKey ? `${q.type}|${q.itemKey}` : [q.type, q.prompt, JSON.stringify(q.visual ?? q.table ?? null), choiceKey(q.choices[q.answerIndex]!)].join('|');
 
+export const SECONDS_PER_QUESTION = 18;
+
+export interface DrillOptions {
+  /** Generators to draw from: one type, one category, or all of them. */
+  generators: readonly Generator[];
+  count: number;
+  /** A fixed level, or 'ramp' to go from easy to hard like the real test. */
+  level: Difficulty | 'ramp';
+}
+
+/** Practice set: types spread evenly, no repeated items, no type three times in a row. */
+export function buildDrill({ generators, count, level }: DrillOptions, seed: number): Question[] {
+  const rng = new Rng(seed);
+  const plan = interleave(spread(rng, [...generators], count), (g) => g.type);
+  return generateUnique(rng, plan, (position) => (level === 'ramp' ? rampLevel(rng, position, count) : level));
+}
+
+/** Generates one question per planned generator, regenerating repeats (up to 20 tries each). */
+function generateUnique(rng: Rng, plan: Generator[], target: (position: number) => Difficulty): Question[] {
+  const seen = new Set<string>();
+  return plan.map((generator, position) => {
+    const level = nearestLevel(generator, target(position));
+    for (let attempt = 0; ; attempt++) {
+      const q = generateQuestion(generator, level, rng.int(0, 2 ** 31));
+      if (!seen.has(fingerprint(q)) || attempt >= 20) {
+        seen.add(fingerprint(q));
+        return q;
+      }
+    }
+  });
+}
+
 export function buildTest(generators: readonly Generator[], seed: number): Test {
   const rng = new Rng(seed);
   const byCategory = (c: Category) => generators.filter((g) => g.category === c);
@@ -77,16 +109,6 @@ export function buildTest(generators: readonly Generator[], seed: number): Test 
     (g) => g.type,
   );
 
-  const seen = new Set<string>();
-  const questions = plan.map((generator, position) => {
-    const level = nearestLevel(generator, rampLevel(rng, position));
-    for (let attempt = 0; ; attempt++) {
-      const q = generateQuestion(generator, level, rng.int(0, 2 ** 31));
-      if (!seen.has(fingerprint(q)) || attempt >= 20) {
-        seen.add(fingerprint(q));
-        return q;
-      }
-    }
-  });
+  const questions = generateUnique(rng, plan, (position) => rampLevel(rng, position));
   return { seed, questions, timeLimitMs: TIME_LIMIT_MS };
 }

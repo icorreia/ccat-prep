@@ -3,10 +3,10 @@ export const formatClock = (ms: number) => {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
 };
 
-/** Countdown display; turns to a warning colour in the last minute. */
-export function Timer({ remainingMs }: { remainingMs: number }) {
+/** Countdown display; turns to a warning colour near the end (last minute by default). */
+export function Timer({ remainingMs, warnBelowMs = 60_000 }: { remainingMs: number; warnBelowMs?: number }) {
   return (
-    <span className={`timer${remainingMs <= 60_000 ? ' warning' : ''}`} role="timer" aria-label={`${formatClock(remainingMs)} remaining`}>
+    <span className={`timer${remainingMs <= warnBelowMs ? ' warning' : ''}`} role="timer" aria-label={`${formatClock(remainingMs)} remaining`}>
       {formatClock(remainingMs)}
     </span>
   );

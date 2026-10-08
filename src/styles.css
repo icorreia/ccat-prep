@@ -526,3 +526,65 @@ table.stats .num {
 .badge.unreached {
   color: var(--muted);
 }
+
+/* Practice */
+
+.app-header nav {
+  display: flex;
+  gap: 16px;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.form label {
+  display: grid;
+  gap: 4px;
+}
+
+.form fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.form label.inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.question-clock {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin: -10px 0 16px;
+  overflow: hidden;
+}
+
+.question-clock div {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s linear;
+}
+
+.pace {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.pace .on-pace {
+  color: var(--correct);
+  font-size: 14px;
+}
+
+.pace .behind {
+  color: var(--wrong);
+  font-size: 14px;
+}

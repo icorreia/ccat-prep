@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router';
 import { useSession } from '../store/session';
 
 export function Home() {
-  const { startTest } = useSession();
+  const { start } = useSession();
   const navigate = useNavigate();
   return (
     <section>
@@ -16,13 +16,14 @@ export function Home() {
           type="button"
           className="primary"
           onClick={() => {
-            startTest();
+            start({ kind: 'test' });
             navigate('/test');
           }}
         >
           Start full test
         </button>
-        <Link to="/gallery">Browse questions</Link>
+        <Link to="/practice">Practice drills</Link>
+        <Link to="/practice?timing=speed">Speed training</Link>
       </div>
       <p className="muted small">Keep scratch paper and a pen nearby, like on the real test.</p>
     </section>
