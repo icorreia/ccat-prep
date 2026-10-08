@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { SENTENCES } from '../../data/sentences';
 import { Rng } from '../../engine/rng';
-import { attentionToDetail, buildItem, detailFeatures, mutate } from './attentionToDetail';
-import { sentenceCompletion, sentenceFeatures } from './sentenceCompletion';
+import { attentionToDetail, buildItem, countNote, detailFeatures, mutate } from './attentionToDetail';
+import { sentenceCompletion, sentenceFeatures, signalWord } from './sentenceCompletion';
 
 describe('sentence data', () => {
   it('has one word per blank in the answer and in every wrong option', () => {
@@ -52,5 +52,19 @@ describe('attention to detail', () => {
     expect(score('codes', 4, 4)).toBe(2); // 4821 / 4821 · …
     expect(score('addresses', 3, 24)).toBe(3); // 1420 Elm Street, Apt 5B …
     expect(score('records', 5, 20)).toBe(4); // Kowalski, J. 55-0912 …
+  });
+});
+
+describe('notes on wrong verbal answers', () => {
+  it('finds the first signal word as a whole word', () => {
+    expect(signalWord('Even though he was ___, Sam spoke confidently.')).toBe('even though');
+    expect(signalWord('The food was ___, so the guests asked for more.')).toBe('so');
+    expect(signalWord('Her butler was ___.')).toBeUndefined();
+  });
+
+  it('says whether a wrong count missed differences or doubted identical pairs', () => {
+    const item = { kind: 'codes' as const, identical: 1, pairs: [{ left: 'AB-12', right: 'AB-12' }, { left: 'CD-34', right: 'CD-43', change: '"34" became "43"' }] };
+    expect(countNote(item, 2)).toBe('Missed 1 difference. Compare character by character; for example, in "CD-34" vs "CD-43", "34" became "43".');
+    expect(countNote(item, 0)).toBe('Counted 1 identical pair as different. Pairs that look alike at a glance can be exactly the same.');
   });
 });

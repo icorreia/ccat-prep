@@ -89,7 +89,7 @@ export const RELATIONS: Relation[] = [
   },
   {
     id: 'worker-tool',
-    describe: (a, b) => `${article(a)} works with ${article(b)}`,
+    describe: (a, b) => `${article(a)} uses ${article(b)} as a tool`,
     level: 3,
     pairs: [
       { a: 'painter', b: 'brush', lures: ['canvas', 'art', 'color'] },

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { RELATIONS } from '../../data/analogies';
 import { WORD_PAIRS } from '../../data/words';
 import { generateQuestion } from '../../engine/question';
-import { analogy, analogyLevel } from './analogy';
-import { antonym, synonym } from './vocabulary';
+import { analogy, analogyLevel, analogyNote } from './analogy';
+import { antonym, gloss, synonym } from './vocabulary';
 
 const pairOf = (word: string) => WORD_PAIRS.find((p) => word in p.a || word in p.b)!;
 const sameSide = (x: string, y: string) => {
@@ -58,5 +58,22 @@ describe('calibration against the blueprint anchors', () => {
     const second = relation.pairs.find((p) => p.a === c)!;
     expect(analogyLevel({ relation, first, second })).toBe(expected);
     expect(analogy.score({ level: analogyLevel({ relation, first, second }) })).toBe(expected);
+  });
+});
+
+describe('notes on wrong verbal answers', () => {
+  it('glosses a rare word with a common one from its cluster', () => {
+    expect(gloss('minuscule')).toBe('small');
+    expect(gloss('jubilant')).toBe('happy');
+  });
+
+  it('explains analogy lures, the first pair, and words from other relations', () => {
+    const relation = RELATIONS.find((r) => r.id === 'worker-tool')!;
+    const [first, second] = [relation.pairs.find((p) => p.a === 'painter')!, relation.pairs.find((p) => p.a === 'farmer')!];
+    const item = { relation, first, second };
+    expect(analogyNote(item, 'field')).toBe('Linked to "farmer", but not in the same way. Test the relation: is it true that a farmer uses a field as a tool?');
+    expect(analogyNote(item, 'brush')).toBe('That completes the first pair (painter → brush), not "farmer".');
+    const elsewhere = RELATIONS.find((r) => r.id === 'part-whole')!.pairs[0]!;
+    expect(analogyNote(item, elsewhere.b)).toContain(`It belongs with "${elsewhere.a}"`);
   });
 });
