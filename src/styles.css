@@ -701,7 +701,8 @@ table.stats .num {
 /* History: question types, filters, calibration */
 
 input[type='number'],
-input[type='date'] {
+input[type='date'],
+input[type='text'] {
   font: inherit;
   color: var(--text);
   background: var(--surface);
@@ -747,6 +748,27 @@ button.sort {
 }
 
 .calibration {
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+/* Question reports */
+
+.report {
+  margin: 8px 0 0;
+}
+
+.report label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-note input {
+  width: min(320px, 100%);
+}
+
+.reports {
   padding-left: 20px;
   font-size: 14px;
 }

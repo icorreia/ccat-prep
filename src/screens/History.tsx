@@ -10,6 +10,9 @@ import { TypeTable } from '../components/history/TypeTable';
 import { summarize } from '../engine/historyStats';
 import { importCalibration, loadCalibration, writeCalibration, type CalibrationEntry } from '../store/calibration';
 import { exportHistory, type StoredSession } from '../store/history';
+import { exportReports, REPORT_REASONS } from '../store/reports';
+import { useReports } from '../store/reportsContext';
+import { GENERATORS } from '../generators';
 import { useHistory } from '../store/historyContext';
 
 const MODES = [
@@ -27,6 +30,15 @@ const RANGES = [
 ] as const;
 
 type Mode = (typeof MODES)[number]['id'];
+
+/** Offers `json` as a file download named `ccat-prep-<name>-<date>.json`. */
+function saveJson(name: string, json: string) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+  a.download = `ccat-prep-${name}-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 function applyFilters(sessions: StoredSession[], mode: Mode, days: number, now: number) {
   const since = days ? now - days * 86_400_000 : -Infinity;
@@ -47,14 +59,8 @@ export function History() {
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
 
-  const download = () => {
-    const blob = new Blob([exportHistory(all, calibration)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `ccat-prep-history-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
+  const { reports } = useReports();
+  const download = () => saveJson('history', exportHistory(all, calibration));
 
   const upload = async (file: File | undefined) => {
     if (!file) return;
@@ -146,6 +152,26 @@ export function History() {
 
       <h2>Official practice test</h2>
       <Calibration sessions={all} entries={calibration} save={saveCalibration} />
+
+      <h2>Reported questions</h2>
+      {reports.length === 0 ? (
+        <p className="muted small">None yet. In Review, use "Report a problem with this question" under any question that looks wrong.</p>
+      ) : (
+        <>
+          <ul className="reports">
+            {[...reports].reverse().map((r) => (
+              <li key={r.questionId}>
+                <strong>{GENERATORS.find((g) => g.type === r.question.type)?.label ?? r.question.type}</strong>, level {r.question.difficulty}:{' '}
+                {REPORT_REASONS[r.reason].toLowerCase()}
+                {r.note && <span className="muted"> · “{r.note}”</span>} <span className="muted small">({r.questionId})</span>
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={() => saveJson('reports', exportReports(reports))}>
+            Export {reports.length} report{reports.length === 1 ? '' : 's'}
+          </button>
+        </>
+      )}
 
       <h2>Backup</h2>
       <p className="muted small">History and official scores live in this browser only. Export them to keep a copy or move them to another device.</p>
