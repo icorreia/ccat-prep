@@ -649,6 +649,15 @@ table.stats .num {
   background: var(--series-neutral);
 }
 
+.swatch.diamond {
+  width: 8px;
+  height: 8px;
+  margin: 0 1px;
+  border-radius: 0;
+  background: var(--series-1);
+  transform: rotate(45deg);
+}
+
 .swatch.reference {
   height: 0;
   border-top: 2px dashed var(--muted);

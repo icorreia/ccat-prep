@@ -90,7 +90,16 @@ function generateUnique(rng: Rng, plan: Generator[], target: (position: number) 
   });
 }
 
-export function buildTest(generators: readonly Generator[], seed: number): Test {
+export interface TestOptions {
+  timeLimitMs?: number;
+  /**
+   * Levels added to every question's target, capped at 5 (Crossover mode). A fractional part is the
+   * chance of one extra level, so 1.4 means +1 for most questions and +2 for about 40% of them.
+   */
+  levelShift?: number;
+}
+
+export function buildTest(generators: readonly Generator[], seed: number, { timeLimitMs = TIME_LIMIT_MS, levelShift = 0 }: TestOptions = {}): Test {
   const rng = new Rng(seed);
   const byCategory = (c: Category) => generators.filter((g) => g.category === c);
   const counts = categoryCounts(rng);
@@ -109,6 +118,8 @@ export function buildTest(generators: readonly Generator[], seed: number): Test 
     (g) => g.type,
   );
 
-  const questions = generateUnique(rng, plan, (position) => rampLevel(rng, position));
-  return { seed, questions, timeLimitMs: TIME_LIMIT_MS };
+  // Only draw the extra random number when shifting, so plain tests keep their seeds' questions.
+  const shift = () => (levelShift ? Math.floor(levelShift) + (rng.chance(levelShift % 1) ? 1 : 0) : 0);
+  const questions = generateUnique(rng, plan, (position) => Math.min(5, rampLevel(rng, position) + shift()) as Difficulty);
+  return { seed, questions, timeLimitMs };
 }

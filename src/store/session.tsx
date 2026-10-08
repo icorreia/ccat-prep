@@ -1,4 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { formatClock } from '../components/Timer';
+import { crossoverSettings, type CrossoverSettings } from '../engine/crossover';
+import { summarize } from '../engine/historyStats';
 import { randomSeed } from '../engine/rng';
 import { isFinished, reduce, startSession, type Session, type SessionAction } from '../engine/session';
 import { buildDrill, buildTest, SECONDS_PER_QUESTION } from '../engine/testBuilder';
@@ -11,7 +14,7 @@ import { useHistory } from './historyContext';
 export type Scope = { kind: 'all' } | { kind: 'category'; category: Category } | { kind: 'type'; type: string };
 
 export type SessionConfig =
-  | { kind: 'test' }
+  | { kind: 'test'; crossover?: boolean }
   | { kind: 'practice'; scope: Scope; count: number; level: Difficulty | 'ramp'; speed: boolean };
 
 export function generatorsFor(scope: Scope): Generator[] {
@@ -23,8 +26,8 @@ export function generatorsFor(scope: Scope): Generator[] {
 const CATEGORY_LABELS: Record<Category, string> = { verbal: 'Verbal', 'math-logic': 'Math & logic', spatial: 'Spatial' };
 
 /** Short description for the history log, e.g. "Speed · Spatial · 10 questions". */
-export function describeConfig(config: SessionConfig): string {
-  if (config.kind === 'test') return 'Full test';
+export function describeConfig(config: SessionConfig, crossover?: CrossoverSettings | null): string {
+  if (config.kind === 'test') return crossover ? `Crossover · ${formatClock(crossover.timeLimitMs)} · level +${crossover.levelShift}` : 'Full test';
   const scope =
     config.scope.kind === 'all'
       ? 'All types'
@@ -35,9 +38,9 @@ export function describeConfig(config: SessionConfig): string {
   return `${config.speed ? 'Speed' : 'Drill'} · ${scope} · ${config.count} questions · ${level}`;
 }
 
-function create(config: SessionConfig, now: number): Session {
+function create(config: SessionConfig, now: number, crossover: CrossoverSettings | null): Session {
   if (config.kind === 'test') {
-    const test = buildTest(GENERATORS, randomSeed());
+    const test = buildTest(GENERATORS, randomSeed(), crossover ?? {});
     return startSession(test.questions, { timeLimitMs: test.timeLimitMs, perQuestionMs: null }, now, 'test');
   }
   const questions = buildDrill({ generators: generatorsFor(config.scope), count: config.count, level: config.level }, randomSeed());
@@ -61,18 +64,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [lastConfig, setLastConfig] = useState<SessionConfig | null>(null);
   const [id, setId] = useState('');
-  const { add } = useHistory();
+  const [label, setLabel] = useState('');
+  const { add, sessions } = useHistory();
 
-  const start = useCallback((config: SessionConfig) => {
-    setLastConfig(config);
-    setId(crypto.randomUUID());
-    setSession(create(config, Date.now()));
-  }, []);
+  const start = useCallback(
+    (config: SessionConfig) => {
+      // Crossover settings come from your latest scores each time, so "Take another test" tightens too.
+      const crossover = config.kind === 'test' && config.crossover ? crossoverSettings(summarize(sessions).recentAvg) : null;
+      setLastConfig(config);
+      setId(crypto.randomUUID());
+      setLabel(describeConfig(config, crossover));
+      setSession(create(config, Date.now(), crossover));
+    },
+    [sessions],
+  );
 
   // Save each session to history once it finishes (add() ignores ids it already has).
   useEffect(() => {
-    if (session && isFinished(session) && lastConfig) add(toStored(session, id, describeConfig(lastConfig))!);
-  }, [session, id, lastConfig, add]);
+    if (session && isFinished(session) && lastConfig) add(toStored(session, id, label, lastConfig.kind === 'test' && !!lastConfig.crossover)!);
+  }, [session, id, label, lastConfig, add]);
 
   const dispatch = useCallback((action: SessionAction) => setSession((s) => (s ? reduce(s, action) : s)), []);
 
