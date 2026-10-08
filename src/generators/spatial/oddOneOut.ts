@@ -1,4 +1,4 @@
-import { figureChoice } from '../../engine/question';
+import { because, figureChoice } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
 import { FILLS, figureKey, shapeName, type FigureSpec } from '../../spatial/figure';
@@ -118,6 +118,22 @@ export function isFair(set: Set5): boolean {
   });
 }
 
+/** Why a member isn't the odd one: it follows the rule like the others. */
+export function memberNote(rule: RuleId, f: FigureSpec): string {
+  switch (rule) {
+    case 'fill':
+      return `It's ${f.fill}, like three of the others.`;
+    case 'shape':
+      return `It's made of ${shapeName(f)}s, like three of the others.`;
+    case 'parity':
+      return `${f.count} shape${f.count === 1 ? '' : 's'}: an ${f.count % 2 === 0 ? 'even' : 'odd'} number, like three of the others.`;
+    case 'sidesMatchCount':
+      return `${f.count} ${shapeName(f)}s: the number of shapes matches the number of sides, like three of the others.`;
+    case 'arrowToDot':
+      return 'The arrow points at the corner with the dot, like in three of the others.';
+  }
+}
+
 export const oddOneOut: Generator = {
   type: 'odd-one-out',
   category: 'spatial',
@@ -130,7 +146,7 @@ export const oddOneOut: Generator = {
     return {
       prompt: 'Which figure does not belong with the others?',
       answer: figureChoice(set.odd),
-      distractors: set.members.map(figureChoice),
+      distractors: set.members.map((m) => because(figureChoice(m), memberNote(set.rule, m))),
       explanation: set.explanation,
       features: { rule: RULES[set.rule], fair: isFair(set) ? 1 : 0 },
     };

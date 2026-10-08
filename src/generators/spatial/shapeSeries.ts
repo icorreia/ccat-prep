@@ -1,7 +1,8 @@
-import { figureChoice, choiceKey } from '../../engine/question';
+import { because, figureChoice, choiceKey } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
-import { FILLS, shapeName, type FigureSpec } from '../../spatial/figure';
+import { ATTRIBUTE_NAMES, attributeValue, differences, type Attribute } from '../../spatial/diff';
+import { FILLS, figureKey, shapeName, type FigureSpec } from '../../spatial/figure';
 
 /** A rule changes one attribute by one step per panel. */
 export interface Rule {
@@ -81,6 +82,23 @@ export function perturbations(answer: FigureSpec, rules: Rule[]): FigureSpec[] {
   return out;
 }
 
+/** The attribute each rule changes, as seen in the figure. */
+const RULE_ATTRIBUTE: Record<Rule['id'], Attribute> = { rotate: 'rotation', sides: 'shape', fill: 'fill', count: 'count', dot: 'dot' };
+
+/** Why a wrong figure doesn't come next: it repeats the last one, breaks a rule, or changes something no rule changes. */
+export function seriesNote(series: Series, start: FigureSpec, wrong: FigureSpec): string {
+  if (figureKey(wrong) === figureKey(series.panels.at(-1)!)) return 'Repeats the last figure. The pattern has to move on one more step.';
+  return differences(series.answer, wrong)
+    .map((attribute) => {
+      const rule = series.rules.find((r) => RULE_ATTRIBUTE[r.id] === attribute);
+      const [should, is] = [attributeValue(series.answer, attribute), attributeValue(wrong, attribute)];
+      return rule
+        ? `Breaks "${rule.describe(start)}": it should be ${should}, not ${is}.`
+        : `Changes the ${ATTRIBUTE_NAMES[attribute]} to ${is}, but nothing in the series changes it.`;
+    })
+    .join(' ');
+}
+
 export const valid = (f: FigureSpec) => f.count >= 1 && f.count <= 6 && (f.shape !== 'polygon' || ((f.sides ?? 0) >= 3 && (f.sides ?? 0) <= 8));
 
 /** Rule sets, by level. score() checks the measured level; this just aims the draft. */
@@ -145,8 +163,11 @@ export const shapeSeries: Generator = {
       prompt: 'Which figure comes next in the series?',
       visual: { kind: 'series', panels: [...series.panels, null] },
       answer: figureChoice(series.answer),
-      distractors: series.wrong.filter(valid).map(figureChoice).filter((c) => choiceKey(c) !== answerKey),
-      explanation: `The rule${series.rules.length > 1 ? 's are' : ' is'}: ${series.rules.map((r) => r.describe(start)).join('; ')}. Each wrong answer breaks one of ${series.rules.length > 1 ? 'these rules' : 'this rule'}.`,
+      distractors: series.wrong
+        .filter(valid)
+        .map((w) => because(figureChoice(w), seriesNote(series, start, w)))
+        .filter((c) => choiceKey(c) !== answerKey),
+      explanation: `The rule${series.rules.length > 1 ? 's are' : ' is'}: ${series.rules.map((r) => r.describe(start)).join('; ')}. Everything else stays the same.`,
       features: { ...seriesFeatures(series), valid: ok ? 1 : 0 },
     };
   },

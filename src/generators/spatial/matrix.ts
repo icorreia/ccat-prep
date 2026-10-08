@@ -1,7 +1,8 @@
-import { choiceKey, figureChoice } from '../../engine/question';
+import { because, choiceKey, figureChoice } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
-import { describeFigure, type FigureSpec, type Fill } from '../../spatial/figure';
+import { attributeValue, differences } from '../../spatial/diff';
+import { describeFigure, figureKey, type FigureSpec, type Fill } from '../../spatial/figure';
 
 export type Attribute = 'shape' | 'count' | 'fill';
 /** How an attribute is laid out: same along each row, same down each column, or a Latin square. */
@@ -77,6 +78,17 @@ export function wrongAnswers(layout: Layout): FigureSpec[] {
   return [cell(layout, 2, 1), cell(layout, 1, 2), ...changed];
 }
 
+/** Why a wrong figure doesn't complete the grid: it copies a neighbour, or breaks an attribute's rule. */
+export function matrixNote(layout: Layout, wrong: FigureSpec): string {
+  if (figureKey(wrong) === figureKey(cell(layout, 2, 1))) return 'Copies the figure to its left. Apply the rules instead of repeating a neighbour.';
+  if (figureKey(wrong) === figureKey(cell(layout, 1, 2))) return 'Copies the figure above it. Apply the rules instead of repeating a neighbour.';
+  const answer = cell(layout, 2, 2);
+  return differences(answer, wrong)
+    .filter((d): d is Attribute => d === 'shape' || d === 'count' || d === 'fill')
+    .map((attr) => `Breaks "${DESCRIBE[layout[attr].arrangement](attr)}": it should be ${attributeValue(answer, attr)}, not ${attributeValue(wrong, attr)}.`)
+    .join(' ');
+}
+
 export const matrix: Generator = {
   type: 'matrix',
   category: 'spatial',
@@ -97,7 +109,7 @@ export const matrix: Generator = {
       visual: { kind: 'matrix', cells: [...cells.slice(0, 8), null] },
       answer: figureChoice(answer),
       distractors: [...wrong.slice(0, 2), ...rng.shuffle(wrong.slice(2))]
-        .map(figureChoice)
+        .map((w) => because(figureChoice(w), matrixNote(layout, w)))
         .filter((c) => choiceKey(c) !== answerKey),
       explanation: `The rules: ${rules.join('; ')}. So the missing figure is ${describeFigure(answer)}.`,
       features: matrixFeatures(layout),

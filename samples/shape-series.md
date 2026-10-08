@@ -20,7 +20,7 @@ C. an empty hexagon, dot bottom-right
 D. an empty hexagon, dot top-right ✅  
 E. an empty hexagon, dot top-left
 
-> The rule is: the dot moves one corner clockwise each step. Each wrong answer breaks one of this rule.  
+> The rule is: the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=1, rotation=0, valid=1_
 
 ---
@@ -41,7 +41,7 @@ C. an empty circle
 D. a striped square  
 E. 2 striped circles
 
-> The rule is: the fill cycles empty → striped → solid. Each wrong answer breaks one of this rule.  
+> The rule is: the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=1, rotation=0, valid=1_
 
 ---
@@ -62,7 +62,7 @@ C. a striped pentagon
 D. an empty heptagon  
 E. a striped hexagon
 
-> The rule is: the shape gains one side each step. Each wrong answer breaks one of this rule.  
+> The rule is: the shape gains one side each step. Everything else stays the same.  
 > _features: rules=1, rotation=0, valid=1_
 
 ---
@@ -83,7 +83,7 @@ C. 6 solid hexagons
 D. 6 empty hexagons  
 E. 4 striped hexagons
 
-> The rule is: there is one more shape each step. Each wrong answer breaks one of this rule.  
+> The rule is: there is one more shape each step. Everything else stays the same.  
 > _features: rules=1, rotation=0, valid=1_
 
 ## Level 2
@@ -104,7 +104,7 @@ C. an empty triangle, rotated 90°
 D. a striped triangle  
 E. an empty triangle, rotated 30°
 
-> The rule is: the triangle turns 90° clockwise each step. Each wrong answer breaks one of this rule.  
+> The rule is: the triangle turns 90° clockwise each step. Everything else stays the same.  
 > _features: rules=1, rotation=1, valid=1_
 
 ---
@@ -125,7 +125,7 @@ C. an empty arrow, rotated 180°
 D. a striped arrow, rotated 180° ✅  
 E. a striped arrow, rotated 135°
 
-> The rule is: the arrow turns 45° clockwise each step. Each wrong answer breaks one of this rule.  
+> The rule is: the arrow turns 45° clockwise each step. Everything else stays the same.  
 > _features: rules=1, rotation=1, valid=1_
 
 ---
@@ -146,7 +146,7 @@ C. an empty triangle ✅
 D. an empty triangle, rotated 60°  
 E. a striped triangle
 
-> The rule is: the triangle turns 90° clockwise each step. Each wrong answer breaks one of this rule.  
+> The rule is: the triangle turns 90° clockwise each step. Everything else stays the same.  
 > _features: rules=1, rotation=1, valid=1_
 
 ---
@@ -167,7 +167,7 @@ C. a striped arrow, rotated 135°
 D. an empty arrow, rotated 180°  
 E. a striped arrow, rotated 225°
 
-> The rule is: the arrow turns 45° clockwise each step. Each wrong answer breaks one of this rule.  
+> The rule is: the arrow turns 45° clockwise each step. Everything else stays the same.  
 > _features: rules=1, rotation=1, valid=1_
 
 ## Level 3
@@ -188,7 +188,7 @@ C. 6 empty circles
 D. 5 empty circles  
 E. 4 striped circles
 
-> The rules are: there is one more shape each step; the fill cycles empty → striped → solid. Each wrong answer breaks one of these rules.  
+> The rules are: there is one more shape each step; the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=2, rotation=0, valid=1_
 
 ---
@@ -209,7 +209,7 @@ C. a striped circle, dot bottom-right
 D. a striped circle, dot bottom-left  
 E. a striped circle, dot top-left ✅
 
-> The rules are: the dot moves one corner clockwise each step; the fill cycles empty → striped → solid. Each wrong answer breaks one of these rules.  
+> The rules are: the dot moves one corner clockwise each step; the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=2, rotation=0, valid=1_
 
 ---
@@ -230,7 +230,7 @@ C. a solid octagon, dot top-right
 D. a solid pentagon, dot top-right  
 E. a solid hexagon, dot top-left
 
-> The rules are: the shape gains one side each step; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the shape gains one side each step; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=2, rotation=0, valid=1_
 
 ---
@@ -251,7 +251,7 @@ C. an empty hexagon
 D. an empty heptagon ✅  
 E. an empty octagon
 
-> The rules are: the shape gains one side each step; the fill cycles empty → striped → solid. Each wrong answer breaks one of these rules.  
+> The rules are: the shape gains one side each step; the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=2, rotation=0, valid=1_
 
 ## Level 4
@@ -272,7 +272,7 @@ C. an empty pentagon, dot bottom-right
 D. an empty heptagon, dot bottom-right ✅  
 E. an empty octagon, dot bottom-right
 
-> The rules are: the shape gains one side each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the shape gains one side each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=3, rotation=0, valid=1_
 
 ---
@@ -293,7 +293,7 @@ C. an empty triangle, rotated 60°
 D. an empty triangle, rotated 30°  
 E. an empty triangle, rotated 90°
 
-> The rules are: the triangle turns 90° clockwise each step; the fill cycles empty → striped → solid. Each wrong answer breaks one of these rules.  
+> The rules are: the triangle turns 90° clockwise each step; the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=2, rotation=1, valid=1_
 
 ---
@@ -314,7 +314,7 @@ C. a striped arrow, rotated 90°, dot top-left
 D. a striped arrow, rotated 270°, dot bottom-left  
 E. a striped arrow, dot top-left ✅
 
-> The rules are: the arrow turns 90° clockwise each step; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the arrow turns 90° clockwise each step; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=2, rotation=1, valid=1_
 
 ---
@@ -335,7 +335,7 @@ C. 5 empty arrows, rotated 135°
 D. 6 empty arrows, rotated 225°  
 E. 6 empty arrows, rotated 135°
 
-> The rules are: the arrow turns 45° clockwise each step; there is one more shape each step. Each wrong answer breaks one of these rules.  
+> The rules are: the arrow turns 45° clockwise each step; there is one more shape each step. Everything else stays the same.  
 > _features: rules=2, rotation=1, valid=1_
 
 ## Level 5
@@ -356,7 +356,7 @@ C. 5 striped triangles, rotated 90°
 D. 5 striped triangles, rotated 30°  
 E. 4 empty triangles, rotated 30°
 
-> The rules are: the triangle turns 90° clockwise each step; there is one more shape each step; the fill cycles empty → striped → solid. Each wrong answer breaks one of these rules.  
+> The rules are: the triangle turns 90° clockwise each step; there is one more shape each step; the fill cycles empty → striped → solid. Everything else stays the same.  
 > _features: rules=3, rotation=1, valid=1_
 
 ---
@@ -377,7 +377,7 @@ C. an empty arrow, rotated 90°, dot bottom-right
 D. an empty arrow, rotated 180°, dot bottom-right ✅  
 E. a solid arrow, rotated 135°, dot top-right
 
-> The rules are: the arrow turns 45° clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the arrow turns 45° clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=3, rotation=1, valid=1_
 
 ---
@@ -398,7 +398,7 @@ C. a striped arrow, rotated 90°, dot bottom-left
 D. a solid arrow, rotated 270°, dot top-left  
 E. a solid arrow, rotated 180°, dot top-left
 
-> The rules are: the arrow turns 90° counter-clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the arrow turns 90° counter-clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=3, rotation=1, valid=1_
 
 ---
@@ -419,5 +419,5 @@ C. a striped triangle, rotated 30°, dot bottom-right
 D. an empty triangle, rotated 30°, dot top-right  
 E. a striped triangle, rotated 60°, dot bottom-right
 
-> The rules are: the triangle turns 90° clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Each wrong answer breaks one of these rules.  
+> The rules are: the triangle turns 90° clockwise each step; the fill cycles empty → striped → solid; the dot moves one corner clockwise each step. Everything else stays the same.  
 > _features: rules=3, rotation=1, valid=1_
