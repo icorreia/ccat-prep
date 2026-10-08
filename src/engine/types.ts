@@ -42,10 +42,12 @@ export interface Generator {
   type: string;
   category: Category;
   label: string;
+  /** Levels this generator can produce. */
+  levels: readonly Difficulty[];
   /** Builds one candidate draft. `target` lets the generator bias its parameters toward a level. */
   draft(rng: Rng, target: Difficulty): Draft;
-  /** Maps measured features to a difficulty level. */
-  score(features: Features): Difficulty;
+  /** Maps measured features to a difficulty level; null rejects the draft (e.g. it broke a constraint). */
+  score(features: Features): Difficulty | null;
 }
 
 export interface Attempt {

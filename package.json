@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck:ts6": "tsc6 -b",
-    "ts:upgrade-check": "node scripts/ts-upgrade-check.mjs"
+    "ts:upgrade-check": "node scripts/ts-upgrade-check.mjs",
+    "samples": "tsx scripts/samples.ts"
   },
   "dependencies": {
     "react": "^19.3.0",
@@ -24,12 +25,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^10.12.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.13.0",
+    "tsx": "^4.23.15",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.71.1",
     "typescript7": "npm:typescript@^7.0.2",

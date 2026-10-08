@@ -7,6 +7,7 @@ const addition: Generator = {
   type: 'toy-add',
   category: 'math-logic',
   label: 'Toy addition',
+  levels: [1, 2, 3],
   draft(rng, target) {
     const max = 10 ** Math.min(target, 3) - 1;
     const a = rng.int(1, max);

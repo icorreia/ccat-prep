@@ -1,0 +1,60 @@
+import { describe, expect, it } from 'vitest';
+import { generateQuestion, rebuildQuestion } from '../engine/question';
+import { GENERATORS, getGenerator } from './index';
+
+/** Seeds per generator, spread evenly over its levels. */
+const SEEDS = 1000;
+
+describe.each(GENERATORS.map((g) => [g.type, g] as const))('%s', (_type, generator) => {
+  const questions = Array.from({ length: SEEDS }, (_, seed) =>
+    generateQuestion(generator, generator.levels[seed % generator.levels.length]!, seed),
+  );
+
+  it('produces every declared level at its measured difficulty', () => {
+    for (const q of questions) expect(generator.score(q.features)).toBe(q.difficulty);
+  });
+
+  it('has distinct choices with the answer at answerIndex', () => {
+    for (const q of questions) {
+      const texts = q.choices.map((c) => c.text);
+      expect(new Set(texts).size).toBe(texts.length);
+      expect(q.answerIndex).toBeGreaterThanOrEqual(0);
+      expect(q.answerIndex).toBeLessThan(q.choices.length);
+    }
+  });
+
+  it('keeps numeric choices whole and non-negative (mental math)', () => {
+    for (const q of questions) {
+      for (const c of q.choices) {
+        const n = Number(c.text);
+        if (c.text.trim() !== '' && !Number.isNaN(n)) {
+          expect(Number.isInteger(n), `${q.id}: ${c.text}`).toBe(true);
+          expect(n, `${q.id}: ${c.text}`).toBeGreaterThanOrEqual(0);
+        }
+      }
+    }
+  });
+
+  it('has a prompt and an explanation', () => {
+    for (const q of questions) {
+      expect(q.prompt.length).toBeGreaterThan(5);
+      expect(q.explanation.length).toBeGreaterThan(5);
+    }
+  });
+
+  it('places the answer at every position across seeds', () => {
+    const positions = new Set(questions.map((q) => q.answerIndex));
+    expect(positions.size).toBe(questions[0]!.choices.length);
+  });
+
+  it('rebuilds identically from its id', () => {
+    for (const q of questions.slice(0, 50)) expect(rebuildQuestion(generator, q.id)).toEqual(q);
+  });
+});
+
+describe('getGenerator', () => {
+  it('finds registered types and rejects unknown ones', () => {
+    expect(getGenerator('number-series').type).toBe('number-series');
+    expect(() => getGenerator('nope')).toThrow(/Unknown question type/);
+  });
+});
