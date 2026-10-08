@@ -1,4 +1,4 @@
-import { text } from '../../engine/question';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Difficulty, Draft, Generator } from '../../engine/types';
 
@@ -121,6 +121,32 @@ function explain(p: Puzzle, counterexample?: Model): string {
   }
 }
 
+/** Why each wrong verdict is wrong, for Review. */
+export function verdictNotes(p: Puzzle): Record<Verdict, string> {
+  const opposite = sentence(negate(p.conclusion), p.names).replace(/^./, (c) => c.toLowerCase());
+  const [premise] = p.premises;
+  // "All A are B, so all B are A": the most common slip, worth naming when it's exactly the trap.
+  const reversed =
+    p.premises.length === 1 && premise!.q === 'all' && p.conclusion.q === 'all' && p.conclusion.x === premise!.y && p.conclusion.y === premise!.x;
+  const [a, b] = [p.names[premise!.x]!, p.names[premise!.y]!];
+  return {
+    True:
+      p.verdict === 'False'
+        ? `The statements rule it out: they guarantee the opposite, ${opposite}`
+        : reversed
+          ? `"All ${a} are ${b}" doesn't mean "all ${b} are ${a}". The statements allow a situation where the conclusion fails.`
+          : "It could be true, but nothing forces it: the statements also allow a situation where it fails (see above). Use only what's stated, not what seems likely.",
+    False:
+      p.verdict === 'True'
+        ? 'The statements guarantee the conclusion, so it cannot be false.'
+        : "Nothing rules it out either: some situations the statements allow make it true. If it isn't forced either way, it's uncertain.",
+    Uncertain:
+      p.verdict === 'True'
+        ? "It isn't open: every situation the statements allow makes it true. Follow the chain of statements from one group to the other."
+        : `It isn't open: the statements guarantee the opposite, ${opposite}`,
+  };
+}
+
 const isParticular = (s: Statement) => s.q === 'some' || s.q === 'someNot';
 
 export interface Puzzle {
@@ -215,7 +241,7 @@ export const syllogism: Generator = {
       prompt: `Assume the following statements are true:\n\n${lines}\n\nConclusion: ${sentence(conclusion, names)}\n\nIf the statements are true, the conclusion is:`,
       answer: text(verdict),
       distractors: [],
-      fixedChoices: ['True', 'False', 'Uncertain'].map((v) => text(v)),
+      fixedChoices: (['True', 'False', 'Uncertain'] as const).map((v) => (v === verdict ? text(v) : because(text(v), verdictNotes(puzzle)[v]))),
       explanation: explain(puzzle, puzzle.counterexample),
       features: { ...features(puzzle), valid: 1 },
     };

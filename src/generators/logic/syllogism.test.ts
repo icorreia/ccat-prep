@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluate, features, sentence, syllogism, type Statement } from './syllogism';
+import { analyse, evaluate, features, sentence, syllogism, verdictNotes, type Statement } from './syllogism';
 
 const [A, B, C] = [0, 1, 2];
 const s = (q: Statement['q'], x: number, y: number): Statement => ({ q, x, y });
@@ -45,5 +45,21 @@ describe('calibration against the blueprint anchors', () => {
   ] as const)('scores the level-%i anchor at its level', (level, premises, conclusion) => {
     const puzzle = { names, premises: [...premises], conclusion, verdict: evaluate(3, [...premises], conclusion) };
     expect(syllogism.score({ ...features(puzzle), valid: 1 })).toBe(level);
+  });
+});
+
+describe('verdict notes', () => {
+  const puzzle = (premises: Statement[], conclusion: Statement) => ({ names: ['writers', 'runners', 'cyclists'], premises, conclusion, ...analyse(3, premises, conclusion) });
+
+  it('names the reversed "all" trap', () => {
+    const p = puzzle([s('all', A, B)], s('all', B, A));
+    expect(p.verdict).toBe('Uncertain');
+    expect(verdictNotes(p).True).toContain('"All writers are runners" doesn\'t mean "all runners are writers"');
+  });
+
+  it('points to the guaranteed opposite when the conclusion is false', () => {
+    const p = puzzle([s('all', A, B), s('all', B, C)], s('someNot', A, C));
+    expect(p.verdict).toBe('False');
+    expect(verdictNotes(p).Uncertain).toContain('the opposite, all writers are cyclists.');
   });
 });
