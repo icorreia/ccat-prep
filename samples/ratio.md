@@ -141,15 +141,15 @@ E. 9:4
 
 **ratio:4:4001**
 
-The ratio A:B is 3:4 and the ratio B:C is 2:5. What is the ratio A:C?
+The ratio A:B is 3:4 and the ratio B:C is 2:5. What is the ratio C:A?
 
-A. 3:10 ✅  
-B. 3:5  
-C. 6:5  
-D. 10:3  
-E. 5:9
+A. 10:3 ✅  
+B. 5:3  
+C. 5:6  
+D. 3:10  
+E. 9:5
 
-> Make B the same in both: A:B = 3:4 and B:C = 4:10. So A:C = 3:10.  
+> Make B the same in both: A:B = 3:4 and B:C = 4:10. So C:A = 10:3.  
 > _features: kind=4, valid=1_
 
 ---
@@ -171,73 +171,73 @@ E. 1:1
 
 **ratio:4:4003**
 
-The ratio A:B is 1:2 and the ratio B:C is 3:4. What is the ratio A:C?
+The ratio A:B is 1:2 and the ratio B:C is 3:4. What is the ratio C:A?
 
-A. 8:3  
-B. 2:3  
-C. 3:8 ✅  
-D. 1:6  
-E. 1:4
+A. 3:8  
+B. 3:2  
+C. 8:3 ✅  
+D. 6:1  
+E. 4:1
 
-> Make B the same in both: A:B = 3:6 and B:C = 6:8. So A:C = 3:8.  
+> Make B the same in both: A:B = 3:6 and B:C = 6:8. So C:A = 8:3.  
 > _features: kind=4, valid=1_
 
 ## Level 5
 
 **ratio:5:5000**
 
-6 machines make 72 parts in 3 hours. At the same rate, how many hours do 2 machines need to make 32 parts?
+The ratio A:B is 1:2 and the ratio C:B is 6:5. What is the ratio A:C?
 
-A. 9  
-B. 5  
-C. 4 ✅  
-D. 1  
-E. 3
+A. 12:5  
+B. 1:6  
+C. 1:15  
+D. 5:12 ✅  
+E. 3:5
 
-> One machine makes 72 ÷ (6 × 3) = 4 parts per hour. 2 machines make 8 per hour, so 32 parts take 32 ÷ 8 = 4 hours.  
+> Flip C:B to B:C = 5:6. Make B the same in both: A:B = 5:10 and B:C = 10:12. So A:C = 5:12.  
 > _features: kind=5, valid=1_
 
 ---
 
 **ratio:5:5001**
 
-4 machines make 40 parts in 5 hours. At the same rate, how many hours do 5 machines need to make 20 parts?
+The ratio A:B is 3:4 and the ratio B:C is 1:2. A + B + C = 90. What is B?
 
-A. 2 ✅  
-B. 0  
-C. 4  
-D. 1  
-E. 3
+A. 18  
+B. 48  
+C. 30  
+D. 40  
+E. 24 ✅
 
-> One machine makes 40 ÷ (4 × 5) = 2 parts per hour. 5 machines make 10 per hour, so 20 parts take 20 ÷ 10 = 2 hours.  
+> Make B the same in both: A:B = 3:4 and B:C = 4:8, so A:B:C = 3:4:8, which is 15 parts. Each part is 90 ÷ 15 = 6, so B = 4 × 6 = 24.  
 > _features: kind=5, valid=1_
 
 ---
 
 **ratio:5:5002**
 
-6 machines make 144 parts in 4 hours. At the same rate, how many hours do 5 machines need to make 210 parts?
+The ratio A:B is 3:4 and the ratio B:C is 2:3. A + B + C = 52. What is A?
 
-A. 7 ✅  
-B. 8  
-C. 5  
-D. 6  
-E. 9
+A. 24  
+B. 12 ✅  
+C. 16  
+D. 11  
+E. 13
 
-> One machine makes 144 ÷ (6 × 4) = 6 parts per hour. 5 machines make 30 per hour, so 210 parts take 210 ÷ 30 = 7 hours.  
+> Make B the same in both: A:B = 3:4 and B:C = 4:6, so A:B:C = 3:4:6, which is 13 parts. Each part is 52 ÷ 13 = 4, so A = 3 × 4 = 12.  
 > _features: kind=5, valid=1_
 
 ---
 
 **ratio:5:5003**
 
-4 machines make 24 parts in 3 hours. At the same rate, how many hours do 7 machines need to make 98 parts?
+The ratio A:B is 2:3 and the ratio B:C is 1:2. A + B + C = 33. What is C?
 
-A. 9  
-B. 7 ✅  
-C. 8  
-D. 5  
-E. 6
+A. 18 ✅  
+B. 11  
+C. 6  
+D. 16  
+E. 9
 
-> One machine makes 24 ÷ (4 × 3) = 2 parts per hour. 7 machines make 14 per hour, so 98 parts take 98 ÷ 14 = 7 hours.  
+> Make B the same in both: A:B = 2:3 and B:C = 3:6, so A:B:C = 2:3:6, which is 11 parts. Each part is 33 ÷ 11 = 3, so C = 6 × 3 = 18.  
 > _features: kind=5, valid=1_
