@@ -1,3 +1,4 @@
+import type { Key } from 'react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, type TooltipContentProps } from 'recharts';
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { rollingAverage, scoreOf } from '../../engine/historyStats';
@@ -8,6 +9,23 @@ interface Point {
   date: string;
   score: number;
   avg: number;
+  crossover: boolean;
+}
+
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload?: Point;
+  r: number;
+}
+
+/** Circles for full tests, diamonds for Crossover tests (shape, not colour, carries the difference). */
+function ScoreDot({ cx, cy, payload, r }: DotProps) {
+  if (cx === undefined || cy === undefined) return null;
+  const ring = { fill: 'var(--series-1)', stroke: 'var(--surface)', strokeWidth: 2 };
+  if (!payload?.crossover) return <circle cx={cx} cy={cy} r={r} {...ring} />;
+  const d = r * 1.4;
+  return <path d={`M${cx},${cy - d}L${cx + d},${cy}L${cx},${cy + d}L${cx - d},${cy}Z`} {...ring} />;
 }
 
 function TrendTooltip({ active, payload }: TooltipContentProps<ValueType, NameType>) {
@@ -17,6 +35,7 @@ function TrendTooltip({ active, payload }: TooltipContentProps<ValueType, NameTy
     <div className="chart-tooltip">
       <div className="muted small">
         Test {p.n} · {p.date}
+        {p.crossover && ' · Crossover'}
       </div>
       <div>
         <span className="swatch series-1" /> Score <strong>{p.score}</strong>
@@ -27,6 +46,10 @@ function TrendTooltip({ active, payload }: TooltipContentProps<ValueType, NameTy
     </div>
   );
 }
+
+const renderDot =
+  (r: number) =>
+  ({ key, cx, cy, payload }: { key?: Key | null; cx?: number; cy?: number; payload?: Point }) => <ScoreDot key={key ?? undefined} cx={cx} cy={cy} payload={payload} r={r} />;
 
 /** Raw score per full test, its 5-test rolling average, and a personal-best line. */
 export function ScoreTrend({ sessions }: { sessions: StoredSession[] }) {
@@ -40,6 +63,7 @@ export function ScoreTrend({ sessions }: { sessions: StoredSession[] }) {
     date: new Date(s.startedAt).toLocaleDateString(),
     score: scores[i]!,
     avg: avg[i]!,
+    crossover: !!s.crossover,
   }));
   const best = Math.max(...scores);
 
@@ -55,6 +79,11 @@ export function ScoreTrend({ sessions }: { sessions: StoredSession[] }) {
         <span>
           <span className="swatch reference" /> Personal best
         </span>
+        {data.some((p) => p.crossover) && (
+          <span>
+            <span className="swatch diamond" /> Crossover test
+          </span>
+        )}
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data} margin={{ top: 20, right: 16, bottom: 4, left: -16 }} accessibilityLayer>
@@ -69,8 +98,8 @@ export function ScoreTrend({ sessions }: { sessions: StoredSession[] }) {
             dataKey="score"
             stroke="var(--series-1)"
             strokeWidth={2}
-            dot={{ r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', strokeWidth: 2 }}
-            activeDot={{ r: 6, stroke: 'var(--surface)', strokeWidth: 2 }}
+            dot={renderDot(4)}
+            activeDot={renderDot(6)}
             isAnimationActive={false}
           />
         </LineChart>

@@ -19,6 +19,8 @@ export interface StoredSession {
    * Dropped from the oldest sessions first if browser storage fills up (scores are kept).
    */
   questions?: Question[];
+  /** Taken in Crossover mode: harder questions and a shorter limit (see engine/crossover.ts). */
+  crossover?: boolean;
 }
 
 export const STORAGE_KEY = 'ccat-prep:history:v1';
@@ -68,7 +70,7 @@ export function writeHistory(sessions: StoredSession[], store = browserStore()):
   return sessions; // storage unavailable: keep it in memory for this visit
 }
 
-export function toStored(session: Session, id: string, label: string): StoredSession | null {
+export function toStored(session: Session, id: string, label: string, crossover = false): StoredSession | null {
   if (!isFinished(session)) return null;
   return {
     id,
@@ -81,6 +83,7 @@ export function toStored(session: Session, id: string, label: string): StoredSes
     total: session.questions.length,
     attempts: session.attempts,
     questions: session.questions,
+    ...(crossover && { crossover: true }),
   };
 }
 
