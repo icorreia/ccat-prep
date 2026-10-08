@@ -29,6 +29,10 @@ CI runs lint, typecheck, tests and build on every PR.
 
 Type-checking uses TypeScript 7, while ESLint uses a TypeScript 6 compatibility package until typescript-eslint supports 7. See [docs/typescript.md](docs/typescript.md) for why, and for the upgrade steps (`npm run ts:upgrade-check`).
 
+## How questions are designed
+
+[docs/item-blueprint.md](docs/item-blueprint.md) defines every question type: what it looks like, how its difficulty is measured, which mistakes its wrong answers target, and reference questions at increasing difficulty. Generators are built and reviewed against it.
+
 ## Status
 
 Under construction. Work lands as a series of small stacked PRs: engine, then generators by category, then the test modes, then history.
