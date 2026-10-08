@@ -30,7 +30,9 @@ export function Home() {
         <Link to="/practice">Practice drills</Link>
         <Link to="/practice?timing=speed">Speed training</Link>
       </div>
-      <p className="muted small">Keep scratch paper and a pen nearby, like on the real test.</p>
+      <p className="muted small">
+        Keep scratch paper and a pen nearby, like on the real test. New to the CCAT? Read the <Link to="/strategy">strategy</Link> first.
+      </p>
 
       <h2>Crossover mode</h2>
       <p>
