@@ -4,7 +4,7 @@ import { Gallery } from './screens/Gallery';
 import { Home } from './screens/Home';
 import { Practice } from './screens/Practice';
 import { Results } from './screens/Results';
-import { Review } from './screens/Review';
+import { PastReview, Review } from './screens/Review';
 import { TestRunner } from './screens/TestRunner';
 import { HistoryProvider } from './store/historyContext';
 import { SessionProvider } from './store/session';
@@ -35,6 +35,7 @@ export function App() {
               <Route path="/test" element={<TestRunner />} />
               <Route path="/results" element={<Results />} />
               <Route path="/review" element={<Review />} />
+              <Route path="/review/:id" element={<PastReview />} />
               <Route
                 path="/history"
                 element={
