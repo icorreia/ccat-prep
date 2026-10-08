@@ -8,6 +8,8 @@ import { percentage } from './math/percentage';
 import { ratioGenerator } from './math/ratio';
 import { tableReading } from './math/tableReading';
 import { analogy } from './verbal/analogy';
+import { attentionToDetail } from './verbal/attentionToDetail';
+import { sentenceCompletion } from './verbal/sentenceCompletion';
 import { antonym, synonym } from './verbal/vocabulary';
 import { wordProblem } from './math/wordProblem';
 
@@ -24,6 +26,8 @@ export const GENERATORS: readonly Generator[] = [
   synonym,
   antonym,
   analogy,
+  sentenceCompletion,
+  attentionToDetail,
 ];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));
