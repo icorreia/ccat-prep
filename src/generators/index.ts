@@ -4,6 +4,7 @@ import { fractionGenerator } from './math/fraction';
 import { numberSeries } from './math/numberSeries';
 import { percentage } from './math/percentage';
 import { ratioGenerator } from './math/ratio';
+import { tableReading } from './math/tableReading';
 import { wordProblem } from './math/wordProblem';
 
 export const GENERATORS: readonly Generator[] = [
@@ -13,6 +14,7 @@ export const GENERATORS: readonly Generator[] = [
   fractionGenerator,
   ratioGenerator,
   wordProblem,
+  tableReading,
 ];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));

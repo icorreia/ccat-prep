@@ -10,6 +10,17 @@ export const DIFFICULTIES: readonly Difficulty[] = [1, 2, 3, 4, 5];
 /** Measured difficulty features, e.g. `{ operations: 2, maxOperand: 48 }`. See docs/item-blueprint.md. */
 export type Features = Record<string, number>;
 
+/** A small dataset shown with the question, as a table or a bar chart. */
+export interface DataTable {
+  title: string;
+  /** Header for the row labels, e.g. "Month". */
+  rowHeader: string;
+  /** One header per value column, e.g. ["Product A", "Product B"]. */
+  columns: string[];
+  rows: { label: string; values: number[] }[];
+  display: 'table' | 'bar';
+}
+
 /** Figure choices arrive with the spatial generators. */
 export type Choice = { kind: 'text'; text: string };
 
@@ -21,6 +32,7 @@ export interface Question {
   difficulty: Difficulty;
   seed: number;
   prompt: string;
+  table?: DataTable;
   choices: Choice[];
   answerIndex: number;
   explanation: string;
@@ -30,6 +42,7 @@ export interface Question {
 /** What a generator produces before choices are shuffled and the question is finalised. */
 export interface Draft {
   prompt: string;
+  table?: DataTable;
   answer: Choice;
   distractors: Choice[];
   explanation: string;
