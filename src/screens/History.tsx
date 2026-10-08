@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router';
+import { PacingChart } from '../components/history/PacingChart';
+import { PointsBreakdown } from '../components/history/PointsBreakdown';
 import { ScoreTrend } from '../components/history/ScoreTrend';
 import { SessionLog } from '../components/history/SessionLog';
 import { StatTiles } from '../components/history/StatTiles';
@@ -51,6 +53,12 @@ export function History() {
 
       <h2>Score trend</h2>
       <ScoreTrend sessions={sessions} />
+
+      <h2>Where points go</h2>
+      <PointsBreakdown sessions={sessions} />
+
+      <h2>Pacing</h2>
+      <PacingChart sessions={sessions} />
 
       <h2>Sessions</h2>
       <SessionLog sessions={sessions} />
