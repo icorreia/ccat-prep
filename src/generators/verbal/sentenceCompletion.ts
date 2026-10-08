@@ -25,6 +25,7 @@ export const sentenceCompletion: Generator = {
           ? ' The sentence signals cause and effect, so the blank must fit the reason given.'
           : '';
     return {
+      itemKey: String(SENTENCES.indexOf(item)),
       prompt: `Choose the word${item.answer.length > 1 ? 's' : ''} that best complete${item.answer.length > 1 ? '' : 's'} the sentence.\n\n${sentence}`,
       answer: text(join(item.answer)),
       distractors: rng.shuffle(item.wrong).map((w) => text(join(w))),

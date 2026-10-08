@@ -318,3 +318,180 @@ button:not(:disabled) {
     height: 68px;
   }
 }
+
+/* Test runner */
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+button.primary:disabled {
+  opacity: 0.45;
+}
+
+button.link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  text-decoration: underline;
+  padding: 6px 0;
+}
+
+.runner-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.timer.warning {
+  color: var(--wrong);
+}
+
+.progress {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.progress div {
+  height: 100%;
+  background: var(--accent);
+}
+
+.runner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.runner-actions .spacer {
+  flex: 1;
+}
+
+.quit-confirm {
+  font-size: 14px;
+}
+
+/* Results */
+
+.score {
+  margin: 8px 0 20px;
+}
+
+.score-value {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.tile-value {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+table.stats {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.stats th,
+table.stats td {
+  border-bottom: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+}
+
+table.stats .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.strip {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 80px;
+  position: relative;
+  background: linear-gradient(to top, transparent calc(50% - 1px), var(--border) calc(50% - 1px), var(--border) 50%, transparent 50%);
+}
+
+.strip li {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.strip li span {
+  display: block;
+  width: 100%;
+  min-height: 3px;
+  border-radius: 2px 2px 0 0;
+}
+
+.strip .correct span,
+.legend .correct {
+  background: var(--correct);
+  color: var(--correct);
+}
+
+.strip .wrong span,
+.legend .wrong {
+  background: var(--wrong);
+  color: var(--wrong);
+}
+
+.strip .skipped span,
+.legend .skipped {
+  background: var(--muted);
+  color: var(--muted);
+}
+
+.strip .unreached span {
+  background: var(--border);
+}
+
+.legend span {
+  background: none !important;
+  margin-right: 12px;
+}
+
+.legend .unreached {
+  color: var(--border);
+}

@@ -36,6 +36,8 @@ export type Visual =
 export interface Question {
   /** `${type}:${difficulty}:${seed}`; enough to rebuild the question. */
   id: string;
+  /** For items drawn from a curated bank: which bank entry, so a test never repeats it. */
+  itemKey?: string;
   type: string;
   category: Category;
   difficulty: Difficulty;
@@ -51,6 +53,8 @@ export interface Question {
 
 /** What a generator produces before choices are shuffled and the question is finalised. */
 export interface Draft {
+  /** See Question.itemKey. */
+  itemKey?: string;
   prompt: string;
   table?: DataTable;
   visual?: Visual;
