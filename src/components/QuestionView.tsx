@@ -1,5 +1,18 @@
-import type { Question } from '../engine/types';
+import type { Question, Visual } from '../engine/types';
+import { Figure } from '../spatial/Figure';
 import { DataTableView } from './DataTableView';
+
+function VisualView({ visual }: { visual: Visual }) {
+  return (
+    <ol className="series" aria-label="Series">
+      {visual.panels.map((panel, i) => (
+        <li key={i} className="panel">
+          {panel ? <Figure figure={panel} /> : <span className="missing" aria-label="Missing figure">?</span>}
+        </li>
+      ))}
+    </ol>
+  );
+}
 
 const LETTERS = 'ABCDE';
 
@@ -16,8 +29,9 @@ export function QuestionView({ question, selected = null, onSelect, reveal = fal
   return (
     <article className="question">
       {question.table && <DataTableView table={question.table} />}
+      {question.visual && <VisualView visual={question.visual} />}
       <p className="prompt">{question.prompt}</p>
-      <ol className="choices">
+      <ol className={`choices${question.choices[0]?.kind === 'figure' ? ' figure-choices' : ''}`}>
         {question.choices.map((choice, i) => {
           const state = reveal
             ? i === question.answerIndex
@@ -38,7 +52,7 @@ export function QuestionView({ question, selected = null, onSelect, reveal = fal
                 aria-pressed={i === selected}
               >
                 <span className="letter">{LETTERS[i]}</span>
-                <span>{choice.text}</span>
+                {choice.kind === 'figure' ? <Figure figure={choice.figure} size={72} /> : <span>{choice.text}</span>}
               </button>
             </li>
           );

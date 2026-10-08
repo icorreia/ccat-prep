@@ -229,3 +229,54 @@ button:not(:disabled) {
 .data-chart .bar-label {
   fill: var(--muted);
 }
+
+/* Spatial figures */
+
+.figure {
+  color: var(--text);
+  display: block;
+}
+
+.series {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.series .panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+}
+
+.series .missing {
+  font-size: 32px;
+  color: var(--muted);
+}
+
+.figure-choices {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+}
+
+.figure-choices .choice {
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .series .panel {
+    width: 64px;
+    height: 64px;
+  }
+
+  .series .figure {
+    width: 56px;
+    height: 56px;
+  }
+}

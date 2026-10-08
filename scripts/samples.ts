@@ -4,7 +4,8 @@
 //   npm run samples -- number-series -> one generator
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { generateQuestion } from '../src/engine/question';
-import type { DataTable, Generator, Question } from '../src/engine/types';
+import type { DataTable, Generator, Question, Visual } from '../src/engine/types';
+import { describeFigure } from '../src/spatial/figure';
 import { GENERATORS, getGenerator } from '../src/generators/index';
 
 const PER_LEVEL = 4;
@@ -15,6 +16,10 @@ function renderTable(table: DataTable): string {
   const rule = `| --- | ${table.columns.map(() => '---:').join(' | ')} |`;
   const rows = table.rows.map((r) => `| ${r.label} | ${r.values.join(' | ')} |`);
   return [`_${table.title} (shown as ${table.display === 'bar' ? 'a bar chart' : 'a table'})_`, '', header, rule, ...rows].join('\n');
+}
+
+function renderVisual(visual: Visual): string {
+  return visual.panels.map((p, i) => `${i + 1}. ${p ? describeFigure(p) : '**?**'}`).join('  \n');
 }
 
 function render(q: Question): string {
@@ -28,6 +33,7 @@ function render(q: Question): string {
     `**${q.id}**`,
     '',
     ...(q.table ? [renderTable(q.table), ''] : []),
+    ...(q.visual ? [renderVisual(q.visual), ''] : []),
     q.prompt.replace(/\n+/g, '  \n'),
     '',
     choices,
