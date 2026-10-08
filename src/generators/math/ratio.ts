@@ -1,5 +1,5 @@
-import { numericDistractors } from '../../engine/distractors';
-import { text } from '../../engine/question';
+import { numericChoices } from '../../engine/distractors';
+import { because, text } from '../../engine/question';
 import type { Rng } from '../../engine/rng';
 import type { Choice, Difficulty, Draft, Generator } from '../../engine/types';
 import { gcd } from './format';
@@ -31,7 +31,18 @@ export function split(a: number, b: number, total: number, names: [string, strin
     kind: 'split',
     prompt: `The ratio of ${names[0]} to ${names[1]} in a group is ${a}:${b}. There are ${total} in total. How many are ${names[1]}?`,
     answer: text(answer),
-    distractors: valid ? numericDistractors(answer, [part * a, total - part, (total / b) * a], 4, rng).map(text) : [],
+    distractors: valid
+      ? numericChoices(
+          answer,
+          [
+            { value: part * a, why: `That's the number of ${names[0]}; the question asks for ${names[1]}.` },
+            { value: total - part, why: `The total minus one part. One part is ${part}, but ${names[1]} make up ${b} parts.` },
+            { value: (total / b) * a, why: `Took ${a}/${b} of the total. The ratio splits the total into ${a} + ${b} = ${a + b} parts, not ${b}.` },
+          ],
+          4,
+          rng,
+        )
+      : [],
     explanation: `${a} + ${b} = ${b + a} parts, so each part is ${total} ÷ ${a + b} = ${part}. ${names[1]}: ${b} × ${part} = ${answer}.`,
     valid,
   };
@@ -46,7 +57,18 @@ export function inverse(workers: number, days: number, other: number, rng: Rng):
     kind: 'inverse',
     prompt: `${workers} workers finish a job in ${days} days. Working at the same rate, how many days would ${other} workers need?`,
     answer: text(answer),
-    distractors: valid ? numericDistractors(answer, [direct, days + (workers - other), days], 4, rng).map(text) : [],
+    distractors: valid
+      ? numericChoices(
+          answer,
+          [
+            { value: direct, why: `Scaled the days the same way as the workers. ${other < workers ? 'Fewer' : 'More'} workers need ${other < workers ? 'more' : 'fewer'} days: it's an inverse proportion.` },
+            { value: days + (workers - other), why: `Changed the days by the difference in workers. Time scales with the ratio of workers (${workers} ÷ ${other}), not the difference.` },
+            { value: days, why: 'The original time. The number of workers changed, so the time changes too.' },
+          ],
+          4,
+          rng,
+        )
+      : [],
     explanation: `The job takes ${workers} × ${days} = ${workers * days} worker-days. ${workers * days} ÷ ${other} = ${answer} days. (${other < workers ? 'Fewer workers means more days' : 'More workers means fewer days'}, so this is an inverse proportion.)`,
     valid,
   };
@@ -58,12 +80,18 @@ export function chain([a1, b1]: [number, number], [b2, c2]: [number, number]): P
   const a = a1 * (m / b1);
   const c = c2 * (m / b2);
   const answer = ratio(a, c);
-  const mistakes = [ratio(a1, c2), ratio(c, a), ratio(a1 * b1, b2 * c2), ratio(a1 + b2, b1 + c2), ratio(a1 * b2, c2)];
+  const mistakes = [
+    because(text(ratio(a1, c2)), `Took A from the first ratio and C from the second without making B the same in both (B is ${b1} in one and ${b2} in the other).`),
+    because(text(ratio(c, a)), "That's C:A, the reverse of what was asked."),
+    because(text(ratio(a1 * b1, b2 * c2)), 'Multiplied the terms within each ratio. Multiply across instead (A/B × B/C) so the B cancels.'),
+    because(text(ratio(a1 + b2, b1 + c2)), 'Added the two ratios term by term. Ratios combine by scaling, not adding.'),
+    because(text(ratio(a1 * b2, c2)), `Scaled A but not C. Both need scaling: A by ${b2}, C by ${b1}.`),
+  ];
   return {
     kind: 'chain',
     prompt: `The ratio A:B is ${a1}:${b1} and the ratio B:C is ${b2}:${c2}. What is the ratio A:C?`,
     answer: text(answer),
-    distractors: mistakes.map(text),
+    distractors: mistakes,
     explanation: `Make B the same in both: A:B = ${a}:${m} and B:C = ${m}:${c}. So A:C = ${a}:${c}${`${a}:${c}` === answer ? '' : ` = ${answer}`}.`,
     valid: b1 !== b2 && gcd(a1, b1) === 1 && gcd(b2, c2) === 1,
   };
@@ -79,7 +107,16 @@ export function scaledWork(m1: number, items1: number, hours1: number, m2: numbe
     prompt: `${m1} machines make ${items1} parts in ${hours1} hours. At the same rate, how many hours do ${m2} machines need to make ${items2} parts?`,
     answer: text(answer),
     distractors: valid
-      ? numericDistractors(answer, [(hours1 * items2) / items1, (hours1 * m2) / m1, (hours1 * m1) / m2], 4, rng).map(text)
+      ? numericChoices(
+          answer,
+          [
+            { value: (hours1 * items2) / items1, why: 'Scaled for the number of parts only; the number of machines changed too.' },
+            { value: (hours1 * m2) / m1, why: 'Scaled the hours in the same direction as the machines. More machines need fewer hours, and the number of parts changed too.' },
+            { value: (hours1 * m1) / m2, why: 'Adjusted for the machines but forgot that the number of parts changed.' },
+          ],
+          4,
+          rng,
+        )
       : [],
     explanation: `One machine makes ${items1} ÷ (${m1} × ${hours1}) = ${perMachineHour} parts per hour. ${m2} machines make ${perMachineHour * m2} per hour, so ${items2} parts take ${items2} ÷ ${perMachineHour * m2} = ${answer} hours.`,
     valid,
