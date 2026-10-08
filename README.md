@@ -19,11 +19,15 @@ npm run dev        # http://localhost:5173
 | ------------------- | ------------------------------------ |
 | `npm run dev`       | Start the dev server                 |
 | `npm run build`     | Type-check and build to `dist/`      |
-| `npm run typecheck` | Type-check only                      |
+| `npm run typecheck` | Type-check only (TypeScript 7)       |
 | `npm run lint`      | ESLint                               |
 | `npm test`          | Run the Vitest suite once            |
 
 CI runs lint, typecheck, tests and build on every PR.
+
+## TypeScript
+
+Type-checking uses TypeScript 7, while ESLint uses a TypeScript 6 compatibility package until typescript-eslint supports 7. See [docs/typescript.md](docs/typescript.md) for why, and for the upgrade steps (`npm run ts:upgrade-check`).
 
 ## Status
 

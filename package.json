@@ -8,12 +8,14 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b",
+    "typecheck": "node node_modules/typescript7/bin/tsc -b",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck:ts6": "tsc6 -b",
+    "ts:upgrade-check": "node scripts/ts-upgrade-check.mjs"
   },
   "dependencies": {
     "react": "^19.3.0",
@@ -28,8 +30,9 @@
     "eslint": "^10.12.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.13.0",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.71.1",
+    "typescript7": "npm:typescript@^7.0.2",
     "vite": "^8.3.3",
     "vitest": "^5.0.3"
   }
