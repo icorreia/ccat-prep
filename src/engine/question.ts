@@ -63,6 +63,7 @@ function build(
 ): Question {
   return {
     id: questionId(generator.type, difficulty, seed),
+    ...(draft.itemKey && { itemKey: draft.itemKey }),
     type: generator.type,
     category: generator.category,
     difficulty,

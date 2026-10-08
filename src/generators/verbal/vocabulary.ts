@@ -70,6 +70,7 @@ function makeGenerator(mode: Mode): Generator {
         ? ` "${traps[0]}" is a trap: it means the ${mode === 'synonym' ? 'opposite' : 'same'}.`
         : '';
       return {
+        itemKey: `${target}:${answer}`,
         prompt: `${mode === 'synonym' ? 'Choose the word that means most nearly the SAME as' : 'Choose the word that is most nearly OPPOSITE to'} ${target.toUpperCase()}.`,
         answer: text(answer),
         distractors,

@@ -30,6 +30,7 @@ export const analogy: Generator = {
     const [first, second] = rng.sample(relation.pairs, 2) as [AnalogyPair, AnalogyPair];
     const item = { relation, first, second };
     return {
+      itemKey: `${second.a}:${second.b}`,
       prompt: `${first.a.toUpperCase()} is to ${first.b.toUpperCase()} as ${second.a.toUpperCase()} is to:`,
       answer: text(second.b),
       distractors: analogyDistractors(rng, item).map((w) => text(w)),
