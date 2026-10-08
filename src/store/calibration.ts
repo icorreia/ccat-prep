@@ -25,6 +25,14 @@ export function loadCalibration(store = browserStore()): CalibrationEntry[] {
   }
 }
 
+/** Merges the official scores from a history export (by id; existing entries win). Older exports have none. */
+export function importCalibration(json: string, current: CalibrationEntry[]): { entries: CalibrationEntry[]; added: number } {
+  const data = JSON.parse(json) as { calibration?: unknown };
+  const known = new Set(current.map((e) => e.id));
+  const incoming = Array.isArray(data.calibration) ? data.calibration.filter(isEntry).filter((e) => !known.has(e.id)) : [];
+  return { entries: [...current, ...incoming].sort((a, b) => a.takenAt - b.takenAt), added: incoming.length };
+}
+
 export function writeCalibration(entries: CalibrationEntry[], store = browserStore()): void {
   try {
     store?.setItem(CALIBRATION_KEY, JSON.stringify(entries));

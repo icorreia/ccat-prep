@@ -1,12 +1,16 @@
 import { useState, type FormEvent } from 'react';
 import { recentAverageAt } from '../../engine/historyStats';
-import { loadCalibration, writeCalibration, type CalibrationEntry } from '../../store/calibration';
+import type { CalibrationEntry } from '../../store/calibration';
 import type { StoredSession } from '../../store/history';
 
 /** Gaps within this many points are noise between two 50-question tests. */
 const CLOSE = 3;
 
-const today = () => new Date().toISOString().slice(0, 10);
+/** Today as "2026-10-08" in local time (toISOString would give the UTC date). */
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 /** "2026-10-08" as local midnight, so the day doesn't shift with the time zone. */
 const parseDay = (day: string) => new Date(`${day}T00:00`).getTime();
 
@@ -16,15 +20,9 @@ function verdict(gap: number) {
 }
 
 /** Official practice-test scores, compared with the in-app average at the time. */
-export function Calibration({ sessions }: { sessions: StoredSession[] }) {
-  const [entries, setEntries] = useState(loadCalibration);
+export function Calibration({ sessions, entries, save }: { sessions: StoredSession[]; entries: CalibrationEntry[]; save: (next: CalibrationEntry[]) => void }) {
   const [score, setScore] = useState('');
   const [day, setDay] = useState(today);
-
-  const save = (next: CalibrationEntry[]) => {
-    writeCalibration(next);
-    setEntries(next);
-  };
 
   const add = (e: FormEvent) => {
     e.preventDefault();
