@@ -495,3 +495,34 @@ table.stats .num {
 .legend .unreached {
   color: var(--border);
 }
+
+/* Review */
+
+.review-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.badge.correct {
+  color: var(--correct);
+}
+
+.badge.wrong {
+  color: var(--wrong);
+}
+
+.badge.skipped,
+.badge.unreached {
+  color: var(--muted);
+}

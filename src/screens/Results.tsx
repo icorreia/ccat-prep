@@ -92,6 +92,7 @@ export function Results() {
       </p>
 
       <div className="runner-actions">
+        <Link to="/review">Review answers</Link>
         <button
           type="button"
           className="primary"
