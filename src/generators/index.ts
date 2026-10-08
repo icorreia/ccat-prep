@@ -7,6 +7,8 @@ import { numberSeries } from './math/numberSeries';
 import { percentage } from './math/percentage';
 import { ratioGenerator } from './math/ratio';
 import { tableReading } from './math/tableReading';
+import { analogy } from './verbal/analogy';
+import { antonym, synonym } from './verbal/vocabulary';
 import { wordProblem } from './math/wordProblem';
 
 export const GENERATORS: readonly Generator[] = [
@@ -19,6 +21,9 @@ export const GENERATORS: readonly Generator[] = [
   tableReading,
   syllogism,
   ordering,
+  synonym,
+  antonym,
+  analogy,
 ];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));
