@@ -34,6 +34,10 @@ Type-checking uses TypeScript 7, while ESLint uses a TypeScript 6 compatibility 
 
 [docs/item-blueprint.md](docs/item-blueprint.md) defines every question type: what it looks like, how its difficulty is measured, which mistakes its wrong answers target, and reference questions at increasing difficulty. Generators are built and reviewed against it.
 
+## Backlog
+
+[docs/backlog.md](docs/backlog.md) lists agreed ideas that aren't scheduled yet, such as moving history storage to IndexedDB.
+
 ## Status
 
 Under construction. Work lands as a series of small stacked PRs: engine, then generators by category, then the test modes, then history.
