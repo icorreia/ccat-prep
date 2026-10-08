@@ -75,13 +75,16 @@ The anchors (reference questions) below are original items written in the style 
 
 ### `ratio`: ratios and proportions
 - **Features:** direct or inverse proportion, whether ratios are chained, total size.
-- **Distractors:** treating an inverse proportion as direct, using the wrong part of the ratio.
+- **Distractors:** treating an inverse proportion as direct, using the wrong part of the ratio, reading C:B as B:C, answering A:C when C:A was asked.
 
 | Level | Item | Answer |
 | --- | --- | --- |
 | 2 | The ratio of boys to girls is 3:5 and there are 40 students. How many are girls? | 25 |
 | 3 | 4 workers finish a job in 6 days. How many days do 3 workers need? | 8 (distractor: 4.5) |
 | 4 | A:B = 2:3 and B:C = 4:5. What is A:C? | 8:15 |
+| 4 | A:B = 3:4 and B:C = 5:6. What is C:A? | 8:5 (distractor: 5:8) |
+| 5 | A:B = 3:4 and C:B = 6:5. What is A:C? | 5:8 (distractor: 9:10, from not flipping C:B) |
+| 5 | A:B = 3:4, B:C = 5:6 and A + B + C = 118. What is C? | 48 |
 
 ### `average`
 - **Features:** forward or reverse (find the missing value), number of values, removal or addition step.
