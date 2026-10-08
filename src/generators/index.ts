@@ -7,6 +7,8 @@ import { numberSeries } from './math/numberSeries';
 import { percentage } from './math/percentage';
 import { ratioGenerator } from './math/ratio';
 import { tableReading } from './math/tableReading';
+import { matrix } from './spatial/matrix';
+import { oddOneOut } from './spatial/oddOneOut';
 import { shapeSeries } from './spatial/shapeSeries';
 import { analogy } from './verbal/analogy';
 import { attentionToDetail } from './verbal/attentionToDetail';
@@ -30,6 +32,8 @@ export const GENERATORS: readonly Generator[] = [
   sentenceCompletion,
   attentionToDetail,
   shapeSeries,
+  matrix,
+  oddOneOut,
 ];
 
 const byType = new Map(GENERATORS.map((g) => [g.type, g]));

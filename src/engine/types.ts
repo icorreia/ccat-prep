@@ -28,8 +28,10 @@ export interface DataTable {
  */
 export type Choice = { kind: 'text'; text: string } | { kind: 'figure'; figure: FigureSpec; text: string };
 
-/** Figures shown with a spatial question: a series with a missing panel (null). */
-export type Visual = { kind: 'series'; panels: (FigureSpec | null)[] };
+/** Figures shown with a spatial question: a series or a 3×3 matrix, with the missing cell as null. */
+export type Visual =
+  | { kind: 'series'; panels: (FigureSpec | null)[] }
+  | { kind: 'matrix'; cells: (FigureSpec | null)[] };
 
 export interface Question {
   /** `${type}:${difficulty}:${seed}`; enough to rebuild the question. */

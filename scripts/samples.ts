@@ -19,7 +19,10 @@ function renderTable(table: DataTable): string {
 }
 
 function renderVisual(visual: Visual): string {
-  return visual.panels.map((p, i) => `${i + 1}. ${p ? describeFigure(p) : '**?**'}`).join('  \n');
+  if (visual.kind === 'series') return visual.panels.map((p, i) => `${i + 1}. ${p ? describeFigure(p) : '**?**'}`).join('  \n');
+  const cell = (p: (typeof visual.cells)[number]) => (p ? describeFigure(p) : '**?**');
+  const rows = [0, 1, 2].map((r) => `| ${visual.cells.slice(r * 3, r * 3 + 3).map(cell).join(' | ')} |`);
+  return ['| | | |', '| --- | --- | --- |', ...rows].join('\n');
 }
 
 function render(q: Question): string {

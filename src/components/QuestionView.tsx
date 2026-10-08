@@ -3,9 +3,10 @@ import { Figure } from '../spatial/Figure';
 import { DataTableView } from './DataTableView';
 
 function VisualView({ visual }: { visual: Visual }) {
+  const panels = visual.kind === 'series' ? visual.panels : visual.cells;
   return (
-    <ol className="series" aria-label="Series">
-      {visual.panels.map((panel, i) => (
+    <ol className={visual.kind} aria-label={visual.kind === 'series' ? 'Series' : 'Matrix'}>
+      {panels.map((panel, i) => (
         <li key={i} className="panel">
           {panel ? <Figure figure={panel} /> : <span className="missing" aria-label="Missing figure">?</span>}
         </li>

@@ -280,3 +280,41 @@ button:not(:disabled) {
     height: 56px;
   }
 }
+
+.matrix {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 96px);
+  gap: 6px;
+}
+
+.matrix .panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  height: 96px;
+  display: grid;
+  place-items: center;
+}
+
+.matrix .missing {
+  font-size: 32px;
+  color: var(--muted);
+}
+
+@media (max-width: 480px) {
+  .matrix {
+    grid-template-columns: repeat(3, 76px);
+  }
+
+  .matrix .panel {
+    height: 76px;
+  }
+
+  .matrix .figure {
+    width: 68px;
+    height: 68px;
+  }
+}
